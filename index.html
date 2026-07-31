@@ -1,0 +1,2051 @@
+<!doctype html>
+<html lang="en" data-visualize-standalone>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Levodopa Schedule Map</title>
+<style>:root {
+  color-scheme: light dark;
+  background-color: transparent !important;
+
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: var(
+    --main-surface-primary,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --foreground: light-dark(rgb(26 28 31), rgb(255 255 255));
+  --card: color-mix(in oklab, var(--foreground) 5%, transparent);
+  --card-foreground: var(--foreground);
+  --popover: light-dark(rgb(255 255 255), rgb(45 45 45));
+  --popover-foreground: var(--foreground);
+  --primary: light-dark(rgb(51 156 255), rgb(131 195 255));
+  --primary-foreground: light-dark(rgb(255 255 255), rgb(13 13 13));
+  --secondary: light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%));
+  --secondary-foreground: var(--foreground);
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: light-dark(
+    rgb(26 28 31 / 49.4%),
+    rgb(255 255 255 / 49.8%)
+  );
+  --accent: light-dark(rgb(229 242 255), rgb(13 39 63));
+  --accent-foreground: var(--primary);
+  --destructive: light-dark(rgb(226 85 7), rgb(255 133 73));
+  --border: light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%));
+  --input: light-dark(
+    rgb(26 28 31 / 11.8%),
+    color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+  );
+  --ring: light-dark(rgb(51 156 255), rgb(131 195 255 / 76%));
+  --font-size-base: 14px;
+  --red: light-dark(rgb(186 38 35), rgb(250 66 62));
+  --green: light-dark(rgb(0 162 64), rgb(64 201 119));
+
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans: -apple-system, system-ui, "Segoe UI", sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 430;
+  --font-weight-medium: 500;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --radius: 10px;
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.6);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 17 17'%3E%3Cpath d='M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z'/%3E%3C/svg%3E");
+
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
+  --color-background-primary: var(--background);
+  --color-text-primary: var(--foreground);
+  --color-border-secondary: var(--border);
+}
+
+:root[data-visualize-standalone] {
+  background-color: var(--background) !important;
+}
+
+/* Generic mobile code-block hosts provide light/dark mode but no series palette.
+   AppBlock hosts set all six variables themselves. */
+:root:not([data-app-block-surface]) {
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(#f3883b, #f59a56);
+  --viz-series-3: light-dark(#5dc977, #74d58b);
+  --viz-series-4: light-dark(#eb77b1, #f08fc0);
+  --viz-series-5: light-dark(#9b79ec, #aa91ef);
+  --viz-series-6: light-dark(#3ab9b1, #5acbc2);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html > body {
+  margin: 0;
+  padding: 5px;
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+:root:not([data-app-block-surface]) > body {
+  padding: 12px;
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: pointer;
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+b,
+strong,
+th {
+  font-weight: var(--font-weight-medium);
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--foreground);
+  font: inherit;
+  text-align: start;
+}
+
+.table :is(th, td) {
+  padding-block: 10px;
+  padding-inline: 0 24px;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.table-responsive > .table :is(th, td) {
+  overflow-wrap: break-word;
+}
+
+.table :is(th, td):last-child {
+  padding-inline-end: 0;
+}
+
+.table :is(caption, thead th) {
+  font-weight: 600;
+}
+
+.table thead th {
+  padding-block: 8px;
+  border-bottom-color: color-mix(in srgb, var(--foreground) 16%, transparent);
+}
+
+.table tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+.table.table-sm :is(th, td) {
+  padding-block: 6px;
+}
+
+.table.table-sm :is(th, td):not(:last-child) {
+  padding-inline-end: 16px;
+}
+
+.table :is(.text-end, [align="right"]) {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.table :is(.text-center, [align="center"]) {
+  text-align: center;
+}
+
+.table .text-nowrap {
+  white-space: nowrap;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+#widget > :not(.card) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--popover-foreground);
+  background: var(--popover);
+  box-shadow: none;
+  font-size: var(--font-size-tooltip);
+  line-height: var(--line-height-tooltip);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* The bundled tooltip runtime owns [data-tooltip]. AppBlock's CSS-only
+   pseudo-tooltip can widen dense grids even while hidden. */
+main [data-tooltip]::after {
+  content: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.viz-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  color: var(--accent-foreground);
+  background: var(--accent);
+  font-weight: var(--font-weight-medium);
+}
+
+small,
+.text-small,
+.viz-badge {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls > .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls > .form-label > :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+.btn {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn-primary {
+  border-color: transparent;
+  color: var(--interactive-label-primary-default, var(--primary-foreground));
+  background: var(--interactive-bg-primary-default, var(--foreground));
+  background-clip: padding-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(
+    in srgb,
+    var(--interactive-label-primary-default, var(--primary-foreground)) 50%,
+    transparent
+  );
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type="file"] {
+  padding: 0;
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control[type="file"]::file-selector-button {
+  min-height: 26px;
+  margin-right: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+}
+
+.form-control[type="file"]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type="color"] {
+  width: 40px;
+  height: 28px;
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type="color"]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 32px 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-check {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type="checkbox"] {
+  border-color: var(--input);
+  border-radius: var(--radius-sm);
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch) .form-check-input[type="checkbox"]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type="checkbox"]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: "";
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+}
+
+.form-check-input[type="radio"] {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
+
+.form-check-input[type="radio"]:checked {
+  border: 2px solid var(--primary);
+  background:
+    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
+    var(--primary);
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+  box-shadow: var(--shadow-sm);
+  content: "";
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--primary);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 28px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: 0;
+  accent-color: var(--primary);
+  background: linear-gradient(
+      color-mix(in srgb, var(--foreground) 7%, transparent),
+      color-mix(in srgb, var(--foreground) 7%, transparent)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-webkit-slider-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+    [aria-pressed="true"],
+    [aria-selected="true"],
+    .is-selected
+  ) {
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.btn.viz-tile:is([aria-pressed="true"], [aria-selected="true"], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget > svg {
+  width: 100%;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+</style>
+</head>
+<body>
+<div id="levodopa-schedule-map">
+  <style>
+    #levodopa-schedule-map {
+      width: 100%;
+      color: var(--foreground);
+      background: transparent;
+      font-family: inherit;
+    }
+    #levodopa-schedule-map .lsm-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.45rem 0.8rem;
+      margin-bottom: 0.35rem;
+    }
+    #levodopa-schedule-map .lsm-scale {
+      color: var(--muted-foreground);
+      font-size: var(--font-size-small);
+    }
+    #levodopa-schedule-map .lsm-key {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 0.75rem;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: var(--muted-foreground);
+      font-size: var(--font-size-small);
+    }
+    #levodopa-schedule-map .lsm-key li {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      white-space: nowrap;
+    }
+    #levodopa-schedule-map .lsm-swatch {
+      width: 1.15rem;
+      height: 0.62rem;
+      flex: 0 0 auto;
+      border-radius: 0.18rem;
+      background-color: var(--swatch-color);
+      background-image: var(--swatch-pattern);
+    }
+    #levodopa-schedule-map .lsm-off {
+      --swatch-color: color-mix(in srgb, var(--viz-series-5) 45%, transparent);
+      --swatch-pattern: radial-gradient(circle, var(--viz-series-5) 0 1px, transparent 1.3px);
+      background-size: 5px 5px;
+    }
+    #levodopa-schedule-map .lsm-diphasic {
+      --swatch-color: color-mix(in srgb, var(--viz-series-2) 40%, transparent);
+      --swatch-pattern: repeating-linear-gradient(45deg, transparent 0 3px, color-mix(in srgb, var(--viz-series-2) 75%, transparent) 3px 4px);
+    }
+    #levodopa-schedule-map .lsm-square {
+      --swatch-color: color-mix(in srgb, var(--viz-series-3) 40%, transparent);
+      --swatch-pattern: repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in srgb, var(--viz-series-3) 70%, transparent) 3px 4px);
+    }
+    #levodopa-schedule-map .lsm-peak {
+      --swatch-color: color-mix(in srgb, var(--viz-series-4) 38%, transparent);
+      --swatch-pattern: repeating-linear-gradient(135deg, transparent 0 3px, color-mix(in srgb, var(--viz-series-4) 75%, transparent) 3px 4px);
+    }
+    #levodopa-schedule-map .lsm-chart {
+      width: 100%;
+      height: 455px;
+      min-height: 410px;
+    }
+    #levodopa-schedule-map .lsm-inspector {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.55rem;
+      align-items: start;
+      margin-top: 0.4rem;
+      min-height: 4.1rem;
+    }
+    #levodopa-schedule-map .lsm-inspector-icon {
+      display: grid;
+      width: 1.8rem;
+      height: 1.8rem;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--primary-foreground);
+      background: var(--viz-series-1);
+      font-weight: 500;
+    }
+    #levodopa-schedule-map .lsm-inspector-title {
+      font-weight: 500;
+    }
+    #levodopa-schedule-map .lsm-inspector-copy {
+      margin-top: 0.12rem;
+      color: var(--muted-foreground);
+      font-size: var(--font-size-small);
+    }
+    #levodopa-schedule-map .lsm-phase-readout {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem 0.55rem;
+      margin-top: 0.3rem;
+      font-size: var(--font-size-small);
+    }
+    #levodopa-schedule-map .lsm-phase-readout span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    #levodopa-schedule-map .lsm-phase-dot {
+      width: 0.45rem;
+      height: 0.45rem;
+      border-radius: 50%;
+      background: var(--phase-color);
+    }
+    #levodopa-schedule-map .lsm-schedule {
+      margin-top: 0.7rem;
+    }
+    #levodopa-schedule-map .lsm-schedule summary {
+      cursor: pointer;
+      font-weight: 500;
+    }
+    #levodopa-schedule-map .lsm-dose-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+      gap: 0.5rem;
+      margin-top: 0.55rem;
+    }
+    #levodopa-schedule-map .lsm-dose-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 0.35rem;
+    }
+    #levodopa-schedule-map .lsm-dose-row span {
+      display: block;
+      margin-bottom: 0.15rem;
+      color: var(--muted-foreground);
+      font-size: var(--font-size-small);
+    }
+    #levodopa-schedule-map .lsm-schedule-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.45rem;
+      margin-top: 0.55rem;
+    }
+    #levodopa-schedule-map .lsm-share-status {
+      color: var(--muted-foreground);
+      font-size: var(--font-size-small);
+    }
+    #levodopa-schedule-map .lsm-disclaimer {
+      margin-top: 0.75rem;
+      padding-top: 0.6rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted-foreground);
+      font-size: var(--font-size-small);
+    }
+    @media (max-width: 520px) {
+      #levodopa-schedule-map .lsm-head {
+        align-items: flex-start;
+      }
+      #levodopa-schedule-map .lsm-key {
+        gap: 0.3rem 0.55rem;
+      }
+      #levodopa-schedule-map .lsm-chart {
+        height: 510px;
+        min-height: 470px;
+      }
+    }
+  </style>
+
+  <div class="lsm-head">
+    <div class="lsm-scale">Relative exposure · one isolated 200 mg CR peak = 100%</div>
+    <ul class="lsm-key" aria-label="Phase fill key">
+      <li><span class="lsm-swatch lsm-off" aria-hidden="true"></span>Low / OFF</li>
+      <li><span class="lsm-swatch lsm-diphasic" aria-hidden="true"></span>Diphasic ↗ ↘</li>
+      <li><span class="lsm-swatch lsm-square" aria-hidden="true"></span>ON / square-wave</li>
+      <li><span class="lsm-swatch lsm-peak" aria-hidden="true"></span>Peak-dose</li>
+    </ul>
+  </div>
+
+  <div id="lsm-chart" class="lsm-chart" role="img" aria-label="Interactive 24-hour relative levodopa exposure curve with phase fills, dose markers, and schedule signals"></div>
+
+  <div class="lsm-inspector card" aria-live="polite">
+    <span id="lsm-inspector-icon" class="lsm-inspector-icon" aria-hidden="true">◆</span>
+    <div>
+      <div id="lsm-inspector-title" class="lsm-inspector-title">Day high</div>
+      <div id="lsm-inspector-copy" class="lsm-inspector-copy">Tap anywhere on the curve or a signal icon.</div>
+      <div id="lsm-phase-readout" class="lsm-phase-readout"></div>
+    </div>
+  </div>
+
+  <details class="lsm-schedule">
+    <summary id="lsm-schedule-summary">Schedule · 4 doses</summary>
+    <div id="lsm-dose-list" class="lsm-dose-list"></div>
+    <div class="lsm-schedule-actions">
+      <button id="lsm-share" class="btn" type="button">Share this schedule</button>
+      <span id="lsm-share-status" class="lsm-share-status" aria-live="polite"></span>
+    </div>
+  </details>
+
+  <div class="lsm-disclaimer">Exploratory schedule model—not measured blood levels or dosing advice. Medication changes belong with the movement-disorders team.</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var root = document.getElementById("levodopa-schedule-map");
+  var chartNode = document.getElementById("lsm-chart");
+  if (!root || !chartNode || typeof echarts === "undefined") return;
+
+  var DAY = 1440;
+  var DISPLAY_START = 360;
+  var DISPLAY_END = 1800;
+  var STEP = 5;
+  var TIMES = [];
+  for (var minute = DISPLAY_START; minute <= DISPLAY_END; minute += STEP) TIMES.push(minute);
+
+  var doses = [
+    { time: "08:00", mg: 200 },
+    { time: "12:00", mg: 100 },
+    { time: "16:00", mg: 100 },
+    { time: "20:00", mg: 100 }
+  ];
+
+  var PHASES = [
+    { key: "off", label: "Low / OFF", short: "Low/OFF", color: "--viz-series-5", pattern: "dots", minimum: 0.22 },
+    { key: "rising", label: "Rising diphasic", short: "Diphasic ↗", color: "--viz-series-2", pattern: "diagonal", minimum: 0.10 },
+    { key: "square", label: "ON / square-wave", short: "Square-wave", color: "--viz-series-3", pattern: "horizontal", minimum: 0.18 },
+    { key: "peak", label: "Peak-dose", short: "Peak-dose", color: "--viz-series-4", pattern: "cross", minimum: 0.10 },
+    { key: "falling", label: "Falling diphasic", short: "Diphasic ↘", color: "--viz-series-2", pattern: "diagonal", minimum: 0.10 }
+  ];
+
+  var PARAMS = {
+    delay: 0.10,
+    release: 5.0,
+    releaseShape: 1.80,
+    releaseScale: 0.42,
+    absorptionRate: 3.0,
+    halfLife: 1.5,
+    effectHalfLife: 0.24,
+    bioavailability: 0.725
+  };
+
+  function css(name, fallback) {
+    var value = getComputedStyle(root).getPropertyValue(name).trim();
+    return value || fallback;
+  }
+
+  function alpha(color, opacity) {
+    if (color.indexOf("rgb(") === 0) return color.replace("rgb(", "rgba(").replace(")", ", " + opacity + ")");
+    if (color.indexOf("rgba(") === 0) return color.replace(/,[^,]+\)$/, ", " + opacity + ")");
+    if (color.charAt(0) === "#") {
+      var hex = color.slice(1);
+      if (hex.length === 3) hex = hex.split("").map(function (item) { return item + item; }).join("");
+      var number = parseInt(hex, 16);
+      return "rgba(" + ((number >> 16) & 255) + ", " + ((number >> 8) & 255) + ", " + (number & 255) + ", " + opacity + ")";
+    }
+    return color;
+  }
+
+  function clamp(value, low, high) {
+    return Math.max(low, Math.min(high, value));
+  }
+
+  function smoothstep(low, high, value) {
+    if (high === low) return value >= high ? 1 : 0;
+    var t = clamp((value - low) / (high - low), 0, 1);
+    return t * t * (3 - 2 * t);
+  }
+
+  function timeToMinute(value) {
+    var parts = value.split(":").map(Number);
+    return parts[0] * 60 + parts[1];
+  }
+
+  function minuteToTime(value, includeDay) {
+    var day = Math.floor(value / DAY);
+    var normalized = ((Math.round(value) % DAY) + DAY) % DAY;
+    var hour = Math.floor(normalized / 60);
+    var minute = normalized % 60;
+    var label = String(hour).padStart(2, "0") + ":" + String(minute).padStart(2, "0");
+    return includeDay && day > 0 ? label + " +1" : label;
+  }
+
+  function durationLabel(minutes) {
+    var hours = Math.floor(minutes / 60);
+    var rest = Math.round(minutes % 60);
+    if (!rest) return hours + " h";
+    if (!hours) return rest + " min";
+    return hours + " h " + rest + " min";
+  }
+
+  function parseSharedSchedule() {
+    var value = new URLSearchParams(window.location.search).get("s");
+    if (!value) return null;
+    var parsed = value.split(",").map(function (entry) {
+      var match = /^(\d{2})(\d{2})-(\d{2,3})$/.exec(entry);
+      if (!match) return null;
+      var hour = Number(match[1]);
+      var minute = Number(match[2]);
+      var mg = Number(match[3]);
+      if (hour > 23 || minute > 59 || mg < 25 || mg > 400) return null;
+      return { time: match[1] + ":" + match[2], mg: mg };
+    });
+    return parsed.length === 4 && parsed.every(Boolean) ? parsed : null;
+  }
+
+  var shared = parseSharedSchedule();
+  if (shared) {
+    doses = shared;
+  } else {
+    try {
+      var saved = JSON.parse(localStorage.getItem("levodopa-schedule-map-doses-v2") || "null");
+      if (Array.isArray(saved) && saved.length === 4 && saved.every(function (dose) {
+        return /^\d{2}:\d{2}$/.test(dose.time) && Number(dose.mg) >= 25 && Number(dose.mg) <= 400;
+      })) {
+        doses = saved.map(function (dose) { return { time: dose.time, mg: Number(dose.mg) }; });
+      }
+    } catch (_) {}
+  }
+
+  function gammaWeight(value, shape, scale) {
+    if (value <= 0) return 0;
+    return Math.pow(value, shape - 1) * Math.exp(-value / scale);
+  }
+
+  function plasmaCurve(timePoints, doseMinute, mg, params) {
+    var curve = new Array(timePoints.length).fill(0);
+    var fragments = 60;
+    var weights = [];
+    var weightTotal = 0;
+    var fragment;
+    for (fragment = 0; fragment < fragments; fragment++) {
+      var releaseAt = (fragment + 0.5) * params.release / fragments;
+      var weight = gammaWeight(releaseAt + 0.03, params.releaseShape, params.releaseScale);
+      weights.push(weight);
+      weightTotal += weight;
+    }
+    var eliminationRate = Math.log(2) / params.halfLife;
+    for (var index = 0; index < timePoints.length; index++) {
+      var total = 0;
+      for (fragment = 0; fragment < fragments; fragment++) {
+        var released = params.delay + (fragment + 0.5) * params.release / fragments;
+        var elapsed = (timePoints[index] - doseMinute) / 60 - released;
+        if (elapsed <= 0) continue;
+        var absorptionRate = params.absorptionRate;
+        var kernel;
+        if (Math.abs(absorptionRate - eliminationRate) < 0.001) {
+          kernel = absorptionRate * elapsed * Math.exp(-absorptionRate * elapsed);
+        } else {
+          kernel = absorptionRate / (absorptionRate - eliminationRate) * (Math.exp(-eliminationRate * elapsed) - Math.exp(-absorptionRate * elapsed));
+        }
+        total += mg * params.bioavailability * weights[fragment] / weightTotal * kernel;
+      }
+      curve[index] = total;
+    }
+    return curve;
+  }
+
+  function effectSite(plasma, halfLife, stepMinutes) {
+    var output = new Array(plasma.length).fill(0);
+    output[0] = plasma[0];
+    var rate = Math.log(2) / halfLife;
+    var fraction = 1 - Math.exp(-rate * stepMinutes / 60);
+    for (var index = 1; index < plasma.length; index++) {
+      output[index] = output[index - 1] + fraction * (plasma[index] - output[index - 1]);
+    }
+    return output;
+  }
+
+  function referenceModel() {
+    var refTimes = [];
+    for (var minute = 0; minute <= 720; minute += STEP) refTimes.push(minute);
+    var curve = effectSite(plasmaCurve(refTimes, 0, 200, PARAMS), PARAMS.effectHalfLife, STEP);
+    var peak = Math.max.apply(null, curve) || 1;
+    var normalized = curve.map(function (value) { return value / peak; });
+    return { peak: peak, curve: normalized, times: refTimes };
+  }
+
+  var REFERENCE = referenceModel();
+
+  function addCurves(curves) {
+    var total = new Array(TIMES.length).fill(0);
+    curves.forEach(function (curve) {
+      for (var index = 0; index < curve.length; index++) total[index] += curve[index];
+    });
+    return total;
+  }
+
+  function buildModel() {
+    var occurrences = [];
+    [-1, 0, 1].forEach(function (dayOffset) {
+      doses.forEach(function (dose, doseIndex) {
+        var absoluteMinute = timeToMinute(dose.time) + dayOffset * DAY;
+        if (absoluteMinute > DISPLAY_END + 120 || absoluteMinute < DISPLAY_START - 36 * 60) return;
+        var raw = effectSite(plasmaCurve(TIMES, absoluteMinute, dose.mg, PARAMS), PARAMS.effectHalfLife, STEP);
+        var curve = raw.map(function (value) { return value / REFERENCE.peak; });
+        occurrences.push({
+          time: absoluteMinute,
+          mg: dose.mg,
+          doseIndex: doseIndex,
+          dayOffset: dayOffset,
+          curve: curve
+        });
+      });
+    });
+    return { total: addCurves(occurrences.map(function (item) { return item.curve; })), occurrences: occurrences };
+  }
+
+  function slopeAt(curve, index) {
+    var windowSize = 3;
+    var beforeIndex = Math.max(0, index - windowSize);
+    var afterIndex = Math.min(curve.length - 1, index + windowSize);
+    var hours = (afterIndex - beforeIndex) * STEP / 60;
+    return hours ? (curve[afterIndex] - curve[beforeIndex]) / hours : 0;
+  }
+
+  function referenceSlopeScale() {
+    var rises = REFERENCE.curve.map(function (_, index) { return slopeAt(REFERENCE.curve, index); });
+    return {
+      rise: Math.max.apply(null, rises) || 1,
+      fall: Math.abs(Math.min.apply(null, rises)) || 1
+    };
+  }
+
+  var SLOPE_SCALE = referenceSlopeScale();
+
+  function phaseScores(curve) {
+    var raw = { off: [], rising: [], square: [], peak: [], falling: [] };
+    for (var index = 0; index < curve.length; index++) {
+      var level = curve[index];
+      var slope = slopeAt(curve, index);
+      var risingRate = clamp(slope / SLOPE_SCALE.rise, 0, 1.5);
+      var fallingRate = clamp(-slope / SLOPE_SCALE.fall, 0, 1.5);
+      var transition = smoothstep(0.16, 0.31, level) * (1 - smoothstep(0.56, 0.74, level));
+      raw.off.push(1 - smoothstep(0.20, 0.42, level));
+      raw.rising.push(transition * smoothstep(0.05, 0.68, risingRate));
+      raw.square.push(smoothstep(0.40, 0.62, level) * (1 - 0.48 * smoothstep(0.92, 1.18, level)));
+      raw.peak.push(smoothstep(0.72, 1.04, level));
+      raw.falling.push(transition * smoothstep(0.05, 0.68, fallingRate));
+    }
+
+    var relative = {};
+    PHASES.forEach(function (phase) {
+      var maximum = Math.max.apply(null, raw[phase.key]);
+      if (maximum < phase.minimum) {
+        relative[phase.key] = raw[phase.key].map(function () { return 0; });
+        return;
+      }
+      relative[phase.key] = raw[phase.key].map(function (value) {
+        var score = value / maximum;
+        return score < 0.08 ? 0 : score;
+      });
+    });
+    return { raw: raw, relative: relative };
+  }
+
+  function contiguousSegments(values, threshold, minimumMinutes) {
+    var segments = [];
+    var start = null;
+    for (var index = 0; index < values.length; index++) {
+      if (values[index] >= threshold && start === null) start = index;
+      if ((values[index] < threshold || index === values.length - 1) && start !== null) {
+        var endIndex = values[index] < threshold ? index - 1 : index;
+        if ((endIndex - start + 1) * STEP >= minimumMinutes) {
+          segments.push({ start: TIMES[start], end: TIMES[endIndex] + STEP });
+        }
+        start = null;
+      }
+    }
+    return segments;
+  }
+
+  function localMaxima(curve, floor) {
+    var points = [];
+    for (var index = 2; index < curve.length - 2; index++) {
+      if (curve[index] < floor || curve[index] < curve[index - 1] || curve[index] <= curve[index + 1]) continue;
+      if (!points.length || TIMES[index] - points[points.length - 1].time > 50) {
+        points.push({ time: TIMES[index], level: curve[index], index: index });
+      } else if (curve[index] > points[points.length - 1].level) {
+        points[points.length - 1] = { time: TIMES[index], level: curve[index], index: index };
+      }
+    }
+    return points;
+  }
+
+  function contributionShare(model, index) {
+    var values = model.occurrences.map(function (occurrence) { return occurrence.curve[index]; });
+    var total = values.reduce(function (sum, value) { return sum + value; }, 0);
+    var largest = Math.max.apply(null, values.concat([0]));
+    return total > 0 ? clamp(1 - largest / total, 0, 1) : 0;
+  }
+
+  function maximumInRange(curve, start, end) {
+    var first = clamp(Math.floor((start - DISPLAY_START) / STEP), 0, curve.length - 1);
+    var last = clamp(Math.ceil((end - DISPLAY_START) / STEP), 0, curve.length - 1);
+    var maximum = 0;
+    for (var index = first; index <= last; index++) maximum = Math.max(maximum, curve[index]);
+    return maximum;
+  }
+
+  function makeSignals(model, phases) {
+    var signals = [];
+    var sorted = doses.map(function (dose) {
+      return { time: timeToMinute(dose.time), mg: dose.mg };
+    }).sort(function (a, b) { return a.time - b.time; });
+
+    sorted.forEach(function (dose, index) {
+      var next = index + 1 < sorted.length ? sorted[index + 1].time : sorted[0].time + DAY;
+      var gap = next - dose.time;
+      var displayStart = Math.max(DISPLAY_START, dose.time);
+      var displayEnd = Math.min(DISPLAY_END, next);
+      if (displayEnd <= displayStart) return;
+      if (gap < 240) {
+        signals.push({
+          mode: "range",
+          icon: "↔",
+          title: "Close interval",
+          timing: minuteToTime(dose.time, true) + "–" + minuteToTime(next, true),
+          copy: durationLabel(gap) + " between doses · controlled-release overlap is likely.",
+          start: displayStart,
+          end: displayEnd,
+          tone: "close",
+          lane: 0
+        });
+      }
+      if (gap > 480) {
+        signals.push({
+          mode: "range",
+          icon: "⋯",
+          title: "Long interval",
+          timing: minuteToTime(dose.time, true) + "–" + minuteToTime(next, true),
+          copy: durationLabel(gap) + " until the next dose · the curve can spend a long stretch low.",
+          start: displayStart,
+          end: displayEnd,
+          tone: "long",
+          lane: 0
+        });
+      }
+    });
+
+    var slopes = model.total.map(function (_, index) { return slopeAt(model.total, index); });
+    var riseIndex = 0;
+    var fallIndex = 0;
+    var highIndex = 0;
+    for (var index = 1; index < model.total.length; index++) {
+      if (slopes[index] > slopes[riseIndex]) riseIndex = index;
+      if (slopes[index] < slopes[fallIndex]) fallIndex = index;
+      if (model.total[index] > model.total[highIndex]) highIndex = index;
+    }
+
+    var overlap = contributionShare(model, highIndex);
+    signals.push({
+      mode: "point",
+      icon: "◆",
+      title: overlap >= 0.25 ? "Overlap crest" : "Day high",
+      timing: minuteToTime(TIMES[highIndex], true),
+      copy: Math.round(model.total[highIndex] * 100) + "% of one full-dose peak" + (overlap >= 0.12 ? " · " + Math.round(overlap * 100) + "% comes from overlapping dose tails." : "."),
+      time: TIMES[highIndex],
+      level: model.total[highIndex],
+      tone: "crest"
+    });
+    signals.push({
+      mode: "point",
+      icon: "↗",
+      title: "Sharpest rise",
+      timing: minuteToTime(TIMES[riseIndex], true),
+      copy: "+" + Math.round(slopes[riseIndex] * 100) + " reference-peak points per hour.",
+      time: TIMES[riseIndex],
+      level: model.total[riseIndex],
+      tone: "rise"
+    });
+    signals.push({
+      mode: "point",
+      icon: "↘",
+      title: "Sharpest fall",
+      timing: minuteToTime(TIMES[fallIndex], true),
+      copy: Math.round(slopes[fallIndex] * 100) + " reference-peak points per hour.",
+      time: TIMES[fallIndex],
+      level: model.total[fallIndex],
+      tone: "fall"
+    });
+
+    contiguousSegments(phases.raw.rising, 0.30, 60).forEach(function (segment) {
+      if (TIMES[riseIndex] >= segment.start && TIMES[riseIndex] <= segment.end) return;
+      signals.push({
+        mode: "range",
+        icon: "↗",
+        title: "Extended rise",
+        timing: minuteToTime(segment.start, true) + "–" + minuteToTime(segment.end, true),
+        copy: durationLabel(segment.end - segment.start) + " in a rising transition-shaped region.",
+        start: segment.start,
+        end: segment.end,
+        tone: "transition",
+        bracketLevel: maximumInRange(model.total, segment.start, segment.end) + 0.08
+      });
+    });
+    contiguousSegments(phases.raw.falling, 0.30, 60).forEach(function (segment) {
+      if (TIMES[fallIndex] >= segment.start && TIMES[fallIndex] <= segment.end) return;
+      signals.push({
+        mode: "range",
+        icon: "↘",
+        title: "Extended fall",
+        timing: minuteToTime(segment.start, true) + "–" + minuteToTime(segment.end, true),
+        copy: durationLabel(segment.end - segment.start) + " in a falling transition-shaped region.",
+        start: segment.start,
+        end: segment.end,
+        tone: "transition",
+        bracketLevel: maximumInRange(model.total, segment.start, segment.end) + 0.08
+      });
+    });
+
+    var lowSegments = contiguousSegments(phases.raw.off, 0.68, 60).sort(function (a, b) {
+      return (b.end - b.start) - (a.end - a.start);
+    });
+    if (lowSegments.length) {
+      var low = lowSegments[0];
+      signals.push({
+        mode: "range",
+        icon: "○",
+        title: "Longest low stretch",
+        timing: minuteToTime(low.start, true) + "–" + minuteToTime(low.end, true),
+        copy: durationLabel(low.end - low.start) + " at the low end of this schedule-relative curve.",
+        start: low.start,
+        end: low.end,
+        tone: "low",
+        bracketLevel: maximumInRange(model.total, low.start, low.end) + 0.07
+      });
+    }
+
+    return signals.filter(function (signal) {
+      return signal.mode === "point" ? signal.time >= DISPLAY_START && signal.time <= DISPLAY_END : signal.end > DISPLAY_START && signal.start < DISPLAY_END;
+    });
+  }
+
+  function phaseDecal(phase, color, intensity) {
+    var base = {
+      color: alpha(color, 0.16 + intensity * 0.22),
+      backgroundColor: "rgba(0,0,0,0)",
+      maxTileWidth: 32,
+      maxTileHeight: 32
+    };
+    if (phase.pattern === "dots") {
+      base.symbol = "circle";
+      base.symbolSize = 0.8;
+      base.dashArrayX = [[2, 4]];
+      base.dashArrayY = [[2, 4]];
+    } else if (phase.pattern === "horizontal") {
+      base.symbol = "rect";
+      base.symbolSize = 0.8;
+      base.dashArrayX = [1, 0];
+      base.dashArrayY = [1, 5];
+      base.rotation = 0;
+    } else if (phase.pattern === "cross") {
+      base.symbol = "rect";
+      base.symbolSize = 0.8;
+      base.dashArrayX = [1, 0];
+      base.dashArrayY = [2, 4];
+      base.rotation = Math.PI / 4;
+    } else {
+      base.symbol = "rect";
+      base.symbolSize = 0.8;
+      base.dashArrayX = [1, 0];
+      base.dashArrayY = [2, 5];
+      base.rotation = Math.PI / 4;
+    }
+    return base;
+  }
+
+  function phaseAreaSeries(model, phases, colors) {
+    return PHASES.map(function (phase) {
+      var data = [];
+      for (var index = 0; index < TIMES.length - 1; index++) {
+        var intensity = (phases.relative[phase.key][index] + phases.relative[phase.key][index + 1]) / 2;
+        if (intensity <= 0) continue;
+        data.push([TIMES[index], TIMES[index + 1], model.total[index], model.total[index + 1], intensity]);
+      }
+      return {
+        name: phase.label,
+        type: "custom",
+        coordinateSystem: "cartesian2d",
+        silent: true,
+        data: data,
+        renderItem: function (params, api) {
+          var bottomLeft = api.coord([api.value(0), 0]);
+          var bottomRight = api.coord([api.value(1), 0]);
+          var topLeft = api.coord([api.value(0), api.value(2)]);
+          var topRight = api.coord([api.value(1), api.value(3)]);
+          var intensity = api.value(4);
+          var points = [bottomLeft, bottomRight, topRight, topLeft];
+          return {
+            type: "polygon",
+            shape: { points: points },
+            style: {
+              fill: alpha(colors[phase.key], 0.035 + intensity * 0.34),
+              decal: phaseDecal(phase, colors[phase.key], intensity)
+            }
+          };
+        },
+        z: 1
+      };
+    });
+  }
+
+  function signalColors() {
+    return {
+      close: css("--viz-series-2", "#d97706"),
+      long: css("--viz-series-5", "#7c3aed"),
+      crest: css("--viz-series-4", "#db2777"),
+      rise: css("--viz-series-2", "#d97706"),
+      fall: css("--viz-series-6", "#0f766e"),
+      transition: css("--viz-series-2", "#d97706"),
+      low: css("--viz-series-5", "#7c3aed")
+    };
+  }
+
+  function signalSeries(signals, maximumY, foreground, background) {
+    var tones = signalColors();
+    return {
+      name: "Schedule signals",
+      type: "custom",
+      coordinateSystem: "cartesian2d",
+      data: signals.map(function (signal, index) {
+        return signal.mode === "point" ? [signal.time, signal.level, index, 0] : [signal.start, signal.end, index, 1];
+      }),
+      renderItem: function (params, api) {
+        var signal = signals[api.value(2)];
+        var tone = tones[signal.tone] || foreground;
+        if (signal.mode === "point") {
+          var point = api.coord([signal.time, signal.level]);
+          var base = api.coord([signal.time, 0]);
+          return {
+            type: "group",
+            children: [
+              { type: "line", shape: { x1: point[0], y1: base[1], x2: point[0], y2: point[1] }, style: { stroke: alpha(tone, 0.55), lineWidth: 1, lineDash: [4, 4] } },
+              { type: "circle", shape: { cx: point[0], cy: point[1], r: 12 }, style: { fill: tone, stroke: background, lineWidth: 2 } },
+              { type: "text", style: { x: point[0], y: point[1], text: signal.icon, fill: background, font: "500 13px system-ui", textAlign: "center", textVerticalAlign: "middle" } }
+            ]
+          };
+        }
+
+        var start = api.coord([signal.start, 0]);
+        var end = api.coord([signal.end, maximumY]);
+        var bracketValue = signal.bracketLevel === undefined ? maximumY * 0.94 : clamp(signal.bracketLevel, maximumY * 0.08, maximumY * 0.88);
+        var laneY = api.coord([signal.start, bracketValue])[1];
+        var middleX = (start[0] + end[0]) / 2;
+        return {
+          type: "group",
+          children: [
+            { type: "line", shape: { x1: start[0], y1: laneY, x2: end[0], y2: laneY }, style: { stroke: alpha(tone, 0.72), lineWidth: 1.5, lineDash: [5, 4] } },
+            { type: "line", shape: { x1: start[0], y1: laneY - 6, x2: start[0], y2: laneY + 6 }, style: { stroke: alpha(tone, 0.8), lineWidth: 1.5 } },
+            { type: "line", shape: { x1: end[0], y1: laneY - 6, x2: end[0], y2: laneY + 6 }, style: { stroke: alpha(tone, 0.8), lineWidth: 1.5 } },
+            { type: "circle", shape: { cx: middleX, cy: laneY, r: 11 }, style: { fill: tone, stroke: background, lineWidth: 2 } },
+            { type: "text", style: { x: middleX, y: laneY, text: signal.icon, fill: background, font: "500 13px system-ui", textAlign: "center", textVerticalAlign: "middle" } }
+          ]
+        };
+      },
+      encode: { x: [0, 1] },
+      tooltip: { show: false },
+      z: 9
+    };
+  }
+
+  function doseSeries(model, maximumY, seriesColor, background) {
+    var visible = model.occurrences.filter(function (occurrence) {
+      return occurrence.time >= DISPLAY_START && occurrence.time <= DISPLAY_END;
+    });
+    return {
+      name: "Doses",
+      type: "scatter",
+      data: visible.map(function (occurrence) { return [occurrence.time, maximumY * 0.035, occurrence.mg]; }),
+      symbol: "roundRect",
+      symbolSize: function (value) { return value[2] >= 200 ? [28, 20] : [24, 18]; },
+      itemStyle: { color: seriesColor, borderColor: background, borderWidth: 1.5 },
+      label: { show: true, color: background, fontSize: 10, fontWeight: 500, formatter: function (params) { return params.value[2]; } },
+      tooltip: { formatter: function (params) { return "<strong>" + minuteToTime(params.value[0], true) + " dose</strong><br>" + params.value[2] + " mg levodopa (CR)"; } },
+      z: 10
+    };
+  }
+
+  var chart = echarts.init(chartNode, null, { renderer: "svg" });
+  var current = null;
+
+  function buildOption() {
+    var style = getComputedStyle(root);
+    var foreground = css("--foreground", "#1f2937");
+    var muted = css("--muted-foreground", "#667085");
+    var border = css("--border", "#d0d5dd");
+    var background = css("--background", "#ffffff");
+    var seriesColor = css("--viz-series-1", "#2563eb");
+    var phaseColors = {};
+    PHASES.forEach(function (phase) { phaseColors[phase.key] = css(phase.color, "#64748b"); });
+
+    var model = buildModel();
+    var phases = phaseScores(model.total);
+    var signals = makeSignals(model, phases);
+    var maximumY = Math.max(1.25, Math.ceil(Math.max.apply(null, model.total) * 10 + 1) / 10);
+    current = { model: model, phases: phases, signals: signals, colors: phaseColors, maximumY: maximumY };
+
+    var series = phaseAreaSeries(model, phases, phaseColors);
+    series.push({
+      name: "Relative effect-site exposure",
+      type: "line",
+      data: TIMES.map(function (time, index) { return [time, model.total[index]]; }),
+      showSymbol: false,
+      lineStyle: { width: 3, color: seriesColor },
+      itemStyle: { color: seriesColor },
+      markLine: {
+        silent: true,
+        symbol: "none",
+        lineStyle: { color: alpha(foreground, 0.42), width: 1.2, type: "dashed" },
+        label: {
+          show: true,
+          position: "insideEndTop",
+          color: muted,
+          fontSize: 11,
+          formatter: root.clientWidth < 480 ? "1 full dose" : "1 isolated 200 mg CR peak"
+        },
+        data: [{ yAxis: 1 }]
+      },
+      labelLayout: { hideOverlap: false },
+      tooltip: { show: false },
+      z: 6
+    });
+    series.push(signalSeries(signals, maximumY, foreground, background));
+    series.push(doseSeries(model, maximumY, seriesColor, background));
+
+    var compact = root.clientWidth < 480;
+    return {
+      animationDurationUpdate: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 220,
+      backgroundColor: "transparent",
+      textStyle: { color: foreground, fontFamily: style.fontFamily },
+      aria: { enabled: true, decal: { show: false } },
+      grid: { left: compact ? 46 : 58, right: compact ? 24 : 16, top: 14, bottom: 40, containLabel: false },
+      tooltip: {
+        trigger: "item",
+        confine: true,
+        backgroundColor: css("--popover", background),
+        borderColor: border,
+        textStyle: { color: css("--popover-foreground", foreground), fontSize: 12 },
+        extraCssText: "max-width:260px;white-space:normal;"
+      },
+      xAxis: {
+        type: "value",
+        min: DISPLAY_START,
+        max: DISPLAY_END,
+        interval: compact ? 240 : 180,
+        axisLabel: { color: muted, fontSize: 11, formatter: function (value) { return minuteToTime(value, true).replace(":00", "").replace(" +1", "+1"); } },
+        axisLine: { lineStyle: { color: border } },
+        axisTick: { show: false },
+        splitLine: { show: true, lineStyle: { color: alpha(border, 0.55), width: 1 } }
+      },
+      yAxis: {
+        type: "value",
+        min: 0,
+        max: maximumY,
+        interval: 0.5,
+        axisLabel: { color: muted, fontSize: 11, formatter: function (value) { return Math.round(value * 100) + "%"; } },
+        axisLine: { show: false },
+        axisTick: { show: false },
+        splitLine: { show: true, lineStyle: { color: alpha(border, 0.55), width: 1 } }
+      },
+      dataZoom: [{ type: "inside", filterMode: "none", zoomOnMouseWheel: true, moveOnMouseMove: true, moveOnMouseWheel: true, preventDefaultMouseMove: false }],
+      series: series
+    };
+  }
+
+  function setInspector(icon, title, copy, color, phases) {
+    var iconNode = document.getElementById("lsm-inspector-icon");
+    iconNode.textContent = icon;
+    iconNode.style.background = color;
+    document.getElementById("lsm-inspector-title").textContent = title;
+    document.getElementById("lsm-inspector-copy").textContent = copy;
+    var readout = document.getElementById("lsm-phase-readout");
+    readout.innerHTML = "";
+    (phases || []).forEach(function (item) {
+      var entry = document.createElement("span");
+      var dot = document.createElement("i");
+      dot.className = "lsm-phase-dot";
+      dot.style.setProperty("--phase-color", item.color);
+      dot.setAttribute("aria-hidden", "true");
+      entry.appendChild(dot);
+      entry.appendChild(document.createTextNode(item.label + " " + Math.round(item.value * 100) + "%"));
+      readout.appendChild(entry);
+    });
+  }
+
+  function inspectTime(time) {
+    if (!current) return;
+    var index = clamp(Math.round((time - DISPLAY_START) / STEP), 0, TIMES.length - 1);
+    var slope = slopeAt(current.model.total, index);
+    var ranked = PHASES.map(function (phase) {
+      return { label: phase.short, value: current.phases.relative[phase.key][index], color: current.colors[phase.key] };
+    }).filter(function (item) { return item.value >= 0.12; }).sort(function (a, b) { return b.value - a.value; }).slice(0, 3);
+    var direction = Math.abs(slope) < 0.025 ? "nearly level" : slope > 0 ? "rising " + Math.round(slope * 100) + " points/h" : "falling " + Math.round(Math.abs(slope) * 100) + " points/h";
+    var leading = ranked.length ? ranked[0] : { label: "No strong phase", color: css("--viz-series-1", "#2563eb") };
+    setInspector("•", minuteToTime(TIMES[index], true) + " · " + leading.label, Math.round(current.model.total[index] * 100) + "% of one full-dose peak · " + direction + ".", leading.color, ranked);
+  }
+
+  function inspectSignal(index) {
+    if (!current || !current.signals[index]) return;
+    var signal = current.signals[index];
+    var tone = signalColors()[signal.tone] || css("--viz-series-1", "#2563eb");
+    setInspector(signal.icon, signal.title + " · " + signal.timing, signal.copy, tone, []);
+  }
+
+  chart.on("click", function (params) {
+    if (params.seriesName === "Schedule signals") {
+      inspectSignal(params.value[2]);
+      return;
+    }
+    if (params.seriesName === "Doses") {
+      inspectTime(params.value[0]);
+      return;
+    }
+    if (params.value && Array.isArray(params.value)) inspectTime(params.value[0]);
+  });
+
+  chart.getZr().on("click", function (event) {
+    if (event.target) return;
+    var point = [event.offsetX, event.offsetY];
+    if (!chart.containPixel({ gridIndex: 0 }, point)) return;
+    var converted = chart.convertFromPixel({ xAxisIndex: 0 }, point);
+    inspectTime(converted[0]);
+  });
+
+  function renderDoseEditor() {
+    var list = document.getElementById("lsm-dose-list");
+    list.innerHTML = "";
+    doses.forEach(function (dose, index) {
+      var row = document.createElement("div");
+      row.className = "lsm-dose-row";
+      row.innerHTML = "<label><span>Time</span><input class=\"form-control\" type=\"time\" value=\"" + dose.time + "\" data-time=\"" + index + "\"></label>" +
+        "<label><span>Levodopa mg</span><input class=\"form-control\" type=\"number\" min=\"25\" max=\"400\" step=\"25\" value=\"" + dose.mg + "\" data-mg=\"" + index + "\"></label>";
+      list.appendChild(row);
+    });
+    document.getElementById("lsm-schedule-summary").textContent = "Schedule · " + doses.length + " doses";
+    list.querySelectorAll("input").forEach(function (input) {
+      input.addEventListener("change", function () {
+        var timeIndex = input.getAttribute("data-time");
+        var mgIndex = input.getAttribute("data-mg");
+        if (timeIndex !== null && input.value) doses[Number(timeIndex)].time = input.value;
+        if (mgIndex !== null) doses[Number(mgIndex)].mg = clamp(Number(input.value) || 25, 25, 400);
+        try { localStorage.setItem("levodopa-schedule-map-doses-v2", JSON.stringify(doses)); } catch (_) {}
+        update();
+      });
+    });
+  }
+
+  function shareSchedule() {
+    var value = doses.map(function (dose) { return dose.time.replace(":", "") + "-" + dose.mg; }).join(",");
+    var url = new URL(window.location.href);
+    url.searchParams.set("s", value);
+    var status = document.getElementById("lsm-share-status");
+    if (navigator.share) {
+      navigator.share({ title: "Levodopa schedule", url: url.toString() }).then(function () {
+        status.textContent = "Shared";
+      }).catch(function () {});
+      return;
+    }
+    navigator.clipboard.writeText(url.toString()).then(function () {
+      status.textContent = "Link copied";
+    }).catch(function () {
+      status.textContent = "Copy the URL from the address bar";
+    });
+  }
+
+  function update() {
+    chart.setOption(buildOption(), true);
+    var crestIndex = current.signals.findIndex(function (signal) { return signal.tone === "crest"; });
+    inspectSignal(crestIndex >= 0 ? crestIndex : 0);
+  }
+
+  var resizeFrame = null;
+  var resizeObserver = new ResizeObserver(function () {
+    chart.resize();
+    if (resizeFrame !== null) cancelAnimationFrame(resizeFrame);
+    resizeFrame = requestAnimationFrame(function () {
+      resizeFrame = null;
+      chart.setOption(buildOption(), true);
+    });
+  });
+
+  document.getElementById("lsm-share").addEventListener("click", shareSchedule);
+  resizeObserver.observe(root);
+  renderDoseEditor();
+  update();
+})();
+</script>
+
+<script id="codex-visualization-floating-ui-core" src="https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js"></script>
+<script id="codex-visualization-floating-ui-dom" src="https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js"></script>
+<script id="codex-visualization-lucide" async src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js"></script>
+<script id="codex-visualization-tooltip">/* oxlint-disable typescript/no-unsafe-argument, typescript/no-unsafe-call, typescript/no-unsafe-return */
+// Runs inside the visualization sandbox, not the host webview.
+(() => {
+  if (window.FloatingUIDOM == null) {
+    return;
+  }
+  const { autoUpdate, computePosition, flip, offset, shift, size } =
+    window.FloatingUIDOM;
+  const tooltipPlacements = new Set(["top", "right", "bottom", "left"]);
+  const tooltipId = `codex-visualization-tooltip-${
+    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
+  }`;
+  const tooltipGap = 5;
+  const hoverDelay = 700;
+  const skipDelay = 300;
+  let activeTrigger = null;
+  let pendingTrigger = null;
+  let tooltip = null;
+  let openTimeout = null;
+  let autoUpdateCleanup = null;
+  let positionRequest = 0;
+  let skipDelayUntil = 0;
+
+  const getTrigger = (target) =>
+    target?.nodeType === Node.ELEMENT_NODE
+      ? target.closest("[data-tooltip]")
+      : null;
+  const containsTarget = (trigger, target) =>
+    target?.nodeType != null && trigger.contains(target);
+  const getContent = (trigger) =>
+    trigger.getAttribute("data-tooltip")?.trim() ?? "";
+  const getPlacement = (trigger) => {
+    const placement = trigger.getAttribute("data-tooltip-placement");
+    return tooltipPlacements.has(placement) ? placement : "top";
+  };
+  const getTooltip = () => {
+    if (tooltip == null) {
+      tooltip = document.createElement("div");
+      tooltip.id = tooltipId;
+      tooltip.className = "tooltip";
+      tooltip.setAttribute("role", "tooltip");
+    }
+    return tooltip;
+  };
+  const setDescribedBy = (trigger, described) => {
+    const ids = new Set(
+      (trigger.getAttribute("aria-describedby") ?? "")
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (described) {
+      ids.add(tooltipId);
+    } else {
+      ids.delete(tooltipId);
+    }
+    if (ids.size === 0) {
+      trigger.removeAttribute("aria-describedby");
+    } else {
+      trigger.setAttribute("aria-describedby", [...ids].join(" "));
+    }
+  };
+  const clearOpenTimeout = () => {
+    if (openTimeout != null) {
+      window.clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+    pendingTrigger = null;
+  };
+  const closeTooltip = (activateSkipDelay = true) => {
+    clearOpenTimeout();
+    positionRequest += 1;
+    autoUpdateCleanup?.();
+    autoUpdateCleanup = null;
+    if (activeTrigger == null) {
+      return;
+    }
+    setDescribedBy(activeTrigger, false);
+    activeTrigger = null;
+    tooltip?.remove();
+    if (activateSkipDelay) {
+      skipDelayUntil = Date.now() + skipDelay;
+    }
+  };
+  const updatePosition = (trigger, floating) => {
+    const request = ++positionRequest;
+    void computePosition(trigger, floating, {
+      middleware: [
+        offset(tooltipGap),
+        flip({ padding: tooltipGap }),
+        shift({ padding: tooltipGap }),
+        size({
+          padding: tooltipGap,
+          apply({ availableHeight, availableWidth, elements }) {
+            elements.floating.style.setProperty(
+              "--tooltip-available-width",
+              `${Math.max(0, availableWidth)}px`,
+            );
+            elements.floating.style.setProperty(
+              "--tooltip-available-height",
+              `${Math.max(0, availableHeight)}px`,
+            );
+          },
+        }),
+      ],
+      placement: getPlacement(trigger),
+      strategy: "fixed",
+    })
+      .then(({ x, y }) => {
+        if (activeTrigger !== trigger || request !== positionRequest) {
+          return;
+        }
+        const scale = window.devicePixelRatio || 1;
+        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
+        floating.style.visibility = "visible";
+      })
+      .catch(() => {
+        if (activeTrigger === trigger && request === positionRequest) {
+          closeTooltip(false);
+        }
+      });
+  };
+  const openTooltip = (trigger) => {
+    const content = getContent(trigger);
+    if (!trigger.isConnected || content.length === 0) {
+      return;
+    }
+    clearOpenTimeout();
+    if (activeTrigger === trigger) {
+      return;
+    }
+    closeTooltip();
+    const floating = getTooltip();
+    floating.textContent = content;
+    floating.style.visibility = "hidden";
+    floating.style.transform = "translate(0, 0)";
+    document.body.appendChild(floating);
+    activeTrigger = trigger;
+    setDescribedBy(trigger, true);
+    autoUpdateCleanup = autoUpdate(trigger, floating, () => {
+      updatePosition(trigger, floating);
+    });
+  };
+  const requestOpen = (trigger, immediate = false) => {
+    if (
+      getContent(trigger).length === 0 ||
+      activeTrigger === trigger ||
+      pendingTrigger === trigger
+    ) {
+      return;
+    }
+    clearOpenTimeout();
+    pendingTrigger = trigger;
+    const delay =
+      immediate || activeTrigger != null || Date.now() < skipDelayUntil
+        ? 0
+        : hoverDelay;
+    if (delay === 0) {
+      openTooltip(trigger);
+      return;
+    }
+    openTimeout = window.setTimeout(() => {
+      openTimeout = null;
+      pendingTrigger = null;
+      openTooltip(trigger);
+    }, delay);
+  };
+  const handlePointerOpen = (event) => {
+    if (event.pointerType === "touch") {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    requestOpen(trigger);
+  };
+  const handleLeave = (event) => {
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handleFocusIn = (event) => {
+    const trigger = getTrigger(event.target);
+    if (trigger?.matches(":focus-visible")) {
+      requestOpen(trigger, true);
+    }
+  };
+  const handleKeyDown = (event) => {
+    if (event.key === "Escape") {
+      closeTooltip();
+    }
+  };
+  const handleContextMenu = (event) => {
+    const trigger = getTrigger(event.target);
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const destroy = () => {
+    closeTooltip(false);
+    document.removeEventListener("pointerover", handlePointerOpen);
+    document.removeEventListener("pointerout", handleLeave);
+    document.removeEventListener("focusin", handleFocusIn);
+    document.removeEventListener("focusout", handleLeave);
+    document.removeEventListener("keydown", handleKeyDown);
+    document.removeEventListener("contextmenu", handleContextMenu);
+    tooltip = null;
+  };
+
+  document.addEventListener("pointerover", handlePointerOpen);
+  document.addEventListener("pointerout", handleLeave);
+  document.addEventListener("focusin", handleFocusIn);
+  document.addEventListener("focusout", handleLeave);
+  document.addEventListener("keydown", handleKeyDown);
+  document.addEventListener("contextmenu", handleContextMenu);
+  window.addEventListener("pagehide", destroy, { once: true });
+})();
+</script>
+<script id="codex-visualization-lucide-initialization">(() => {
+  const initialize = () => {
+    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
+  };
+  if (globalThis.lucide != null) {
+    initialize();
+    return;
+  }
+  document
+    .getElementById("codex-visualization-lucide")
+    ?.addEventListener("load", initialize, { once: true });
+})();
+</script>
+</body>
+</html>

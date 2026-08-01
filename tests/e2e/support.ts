@@ -13,6 +13,8 @@ export const viewports = [
 
 export async function capture(page: Page, name: string) {
   await fs.mkdir('artifacts/screenshots', { recursive: true });
+  await fs.mkdir('artifacts/viewport-screenshots', { recursive: true });
+  await page.screenshot({ path: `artifacts/viewport-screenshots/${name}.png`, fullPage: false });
   await page.screenshot({ path: `artifacts/screenshots/${name}.png`, fullPage: true });
   const metrics = await page.evaluate(() => ({
     viewport: { width: innerWidth, height: innerHeight },

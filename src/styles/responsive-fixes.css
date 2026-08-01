@@ -3,6 +3,14 @@
   color: var(--text-primary);
 }
 
+.journey {
+  margin-top: 20px;
+}
+
+.journey-rail {
+  top: 18px;
+}
+
 .dose-station--next {
   display: block;
   min-height: 158px;
@@ -45,17 +53,28 @@
   }
 
   .app-layout {
-    grid-template-columns: minmax(0, 1fr) 210px;
+    grid-template-columns: minmax(0, 1fr) 225px;
     gap: 14px;
   }
 
   .view {
-    max-width: 420px;
+    max-width: 421px;
   }
 
   .context-panel {
     min-width: 0;
-    padding: 16px;
+    padding: 14px;
+  }
+
+  .selection-callout {
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .selection-callout .forecast-glyph {
+    width: 42px;
+    height: 42px;
   }
 }
 
@@ -85,8 +104,31 @@
 }
 
 @media (max-width: 359px) {
+  .right-now {
+    min-height: 250px;
+    padding: 16px 16px 12px;
+  }
+
+  .right-now__main {
+    margin: 16px 0 12px;
+  }
+
+  .right-now h2 {
+    font-size: 27px;
+  }
+
+  .right-now p {
+    font-size: 16px;
+  }
+
+  .day-overview,
+  .day-overview svg {
+    min-height: 66px;
+    height: 66px;
+  }
+
   .dose-station--next {
-    min-height: 170px;
+    min-height: 150px;
   }
 
   .dose-station--next .dose-station__copy {

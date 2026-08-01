@@ -1,0 +1,67 @@
+name: Verification foundation
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verification-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  webkit-verification:
+    name: WebKit capture and accessibility
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package.json
+
+      - name: Install verification dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Install Playwright WebKit
+        run: npx playwright install --with-deps webkit
+
+      - name: Run viewport, state, and axe capture matrix
+        run: npm run test:e2e
+        env:
+          CI: '1'
+          AXE_ENFORCE: '0'
+          VISUAL_COMPARE: '0'
+
+      - name: Upload screenshots and machine-readable reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-captures-${{ github.run_id }}
+          path: |
+            artifacts/screenshots/
+            artifacts/metrics/
+            artifacts/accessibility/
+            artifacts/browser/
+            artifacts/reports/
+            artifacts/test-results/
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Upload Playwright HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ github.run_id }}
+          path: artifacts/playwright-report/
+          if-no-files-found: warn
+          retention-days: 30

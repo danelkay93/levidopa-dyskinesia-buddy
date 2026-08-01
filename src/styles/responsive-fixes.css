@@ -127,19 +127,60 @@
     height: 66px;
   }
 
+  .journey {
+    margin-top: 10px;
+  }
+
   .dose-station--next {
-    min-height: 150px;
+    min-height: 156px;
+    padding: 14px 40px 38px 16px;
   }
 
   .dose-station--next .dose-station__copy {
-    padding-right: 52px;
+    padding-right: 48px;
+  }
+
+  .dose-station--next .dose-station__time {
+    margin-top: 2px;
+    font-size: 28px;
+    line-height: 1.05;
+  }
+
+  .dose-station--next .dose-station__amount {
+    font-size: 16px;
+    line-height: 1.25;
+  }
+
+  .dose-station--next .dose-station__until {
+    margin-top: 2px;
+    font-size: 14px;
+    line-height: 1.2;
   }
 
   .dose-station--next .tablet-illustration {
-    right: 42px;
+    top: 13px;
+    right: 40px;
+    width: 44px;
   }
 
   .dose-station--next .dose-station__forecast {
-    right: 38px;
+    left: 16px;
+    right: 16px;
+    bottom: 7px;
+    max-width: none;
+    justify-content: space-between;
+    gap: 8px;
+    line-height: 1.15;
+  }
+
+  .dose-station--next .dose-station__forecast .forecast-glyph {
+    width: 36px;
+    height: 26px;
+    flex: 0 0 auto;
+  }
+
+  .dose-station--next .dose-station__forecast span {
+    max-width: 160px;
+    text-align: right;
   }
 }

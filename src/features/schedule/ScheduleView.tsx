@@ -95,7 +95,7 @@ export function ScheduleView({ schedule, onChange, onShare }: { schedule: Schedu
       })}
     </div>
 
-    {removedDose ? <div className="undo-removal" role="status"><span>Dose at {removedDose.time} removed.</span><Button variant="quiet" onPress={undoRemove}>Undo</Button></div> : null}
+    {removedDose ? <div className="undo-removal"><span role="status">Dose at {removedDose.time} removed.</span><Button variant="quiet" onPress={undoRemove}>Undo</Button></div> : null}
 
     <Button className="add-dose" onPress={add}><PlusIcon/>Add another dose</Button>
     <section className="share-entry"><div><h2>Share or export schedule</h2><p>Review exactly what the link contains.</p></div><Button variant="quiet" onPress={onShare}><LinkSimpleIcon/>Open</Button></section>

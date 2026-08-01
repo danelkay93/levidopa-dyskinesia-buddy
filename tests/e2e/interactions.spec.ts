@@ -33,7 +33,7 @@ test('duplicate times block saving and removal can be undone', async ({ page }) 
   await expect(page.getByRole('button', { name: 'Done' })).toBeEnabled();
 
   await page.getByRole('button', { name: 'Remove dose at 19:00' }).click();
-  await expect(page.getByRole('status')).toContainText('Dose at 19:00 removed');
+  await expect(page.getByText('Dose at 19:00 removed.', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Undo' }).click();
   await expect(page.getByRole('button', { name: 'Remove dose at 19:00' })).toBeVisible();
 });

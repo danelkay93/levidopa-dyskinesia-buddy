@@ -9,7 +9,7 @@ test('full product story stays coherent across My Day, Analyze, editing, sharing
   await expect(page.getByRole('button', { name: /Next dose at 11:30/i })).toBeVisible();
 
   await page.getByTestId('day-overview').click();
-  await expect(page.getByRole('heading', { name: 'Today at a glance' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Today at a glance', exact: true })).toBeVisible();
   await page.getByRole('button', { name: /Building/i }).first().click();
   await expect(page.getByText(/derived schedule period/i)).toBeVisible();
   await page.getByRole('button', { name: 'Open technical curve' }).click();
@@ -26,7 +26,7 @@ test('full product story stays coherent across My Day, Analyze, editing, sharing
 
   await page.getByRole('button', { name: 'Schedule' }).last().click();
   await page.getByRole('button', { name: 'Open' }).click();
-  await expect(page.getByRole('heading', { name: 'Share or export' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Share or export', exact: true })).toBeVisible();
   await expect(page.getByText('Names, notes, symptoms, or hidden metadata.')).toBeVisible();
 
   expect(errors).toEqual([]);

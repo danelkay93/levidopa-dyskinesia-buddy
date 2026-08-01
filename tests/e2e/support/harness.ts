@@ -131,13 +131,21 @@ export async function openApp(page: Page, query = ''): Promise<void> {
   // networkidle made the verification suite depend on those unrelated requests.
   await page.goto(`/${query}`, { waitUntil: 'commit' });
   await page.waitForFunction(() => {
+    const chartElement = document.querySelector<HTMLElement>('#ldm-chart');
+    const chart = (window as typeof window & { __LDM_TEST_CHART__?: { getOption?: () => unknown } })
+      .__LDM_TEST_CHART__;
+    if (!chartElement || !chart) return false;
+    const rect = chartElement.getBoundingClientRect();
+    const option = typeof chart.getOption === 'function' ? chart.getOption() : null;
     return Boolean(
       document.querySelector('#levodopa-day-map') &&
       document.body.innerText.trim().length > 100 &&
-      (window as typeof window & { __LDM_TEST_CHART__?: unknown }).__LDM_TEST_CHART__
+      rect.width > 0 &&
+      rect.height > 0 &&
+      option
     );
   });
-  await page.locator('#ldm-chart canvas').first().waitFor({ state: 'visible' });
+  await page.locator('#ldm-chart').waitFor({ state: 'visible' });
 }
 
 export async function invokeChartClick(
@@ -204,6 +212,7 @@ export async function captureMetrics(page: Page, name: string, testInfo: TestInf
         })),
         landmarks,
         canvasCount: document.querySelectorAll('canvas').length,
+        svgCount: document.querySelectorAll('#ldm-chart svg').length,
         roleImageCount: document.querySelectorAll('[role="img"]').length,
         chartFocusableDescendants: document.querySelectorAll('#ldm-chart [tabindex], #ldm-chart button, #ldm-chart a').length,
       },

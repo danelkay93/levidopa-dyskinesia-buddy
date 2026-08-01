@@ -34,7 +34,7 @@ jobs:
         run: npm install --no-audit --no-fund
 
       - name: Install Playwright WebKit
-        run: npx playwright install --with-deps webkit
+        run: npx playwright install webkit
 
       - name: Run viewport, state, and axe capture matrix
         run: npm run test:ci

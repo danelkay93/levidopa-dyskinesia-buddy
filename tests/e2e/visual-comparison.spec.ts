@@ -1,34 +1,18 @@
-import { expect, test } from '@playwright/test';
-import { schedules } from './fixtures/schedules';
-import { installHarness, invokeChartClick, openApp } from './support/harness';
+import { test, expect } from '@playwright/test';
 
-const visualComparisonEnabled = process.env.VISUAL_COMPARE === '1';
+test.skip(!process.env.VISUAL_COMPARE, 'Set VISUAL_COMPARE=1 to enable approved-baseline comparison');
+const cases = [
+  ['default-390', '/?now=09:30', { width: 390, height: 844 }],
+  ['default-320', '/?now=09:30', { width: 320, height: 568 }],
+  ['tablet-768', '/?now=09:30&state=dose-1130', { width: 768, height: 1024 }],
+  ['analyze-390', '/?view=analyze&now=12:00', { width: 390, height: 844 }],
+] as const;
 
-test.describe('opt-in visual comparison', () => {
-  test.skip(
-    !visualComparisonEnabled,
-    'Current screenshots are captures, not approved visual baselines. Set VISUAL_COMPARE=1 only after an explicit baseline decision.',
-  );
-
-  test('default phone', async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 844 });
-    await installHarness(page, schedules.defaultDay.doses);
-    await openApp(page);
-    await expect(page).toHaveScreenshot('default-phone-390x844.png', { fullPage: true });
+for (const [name, path, viewport] of cases) {
+  test(name, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    await page.goto(path);
+    await page.getByTestId('app-shell').waitFor();
+    await expect(page).toHaveScreenshot(`${name}.png`, { fullPage: true });
   });
-
-  test('selected dose phone', async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 844 });
-    await installHarness(page, schedules.defaultDay.doses);
-    await openApp(page);
-    await invokeChartClick(page, { seriesName: 'Dose pills', value: [450, 200, 0] });
-    await expect(page).toHaveScreenshot('selected-dose-phone-390x844.png', { fullPage: true });
-  });
-
-  test('minimum phone width', async ({ page }) => {
-    await page.setViewportSize({ width: 320, height: 568 });
-    await installHarness(page, schedules.defaultDay.doses);
-    await openApp(page);
-    await expect(page).toHaveScreenshot('default-phone-320x568.png', { fullPage: true });
-  });
-});
+}

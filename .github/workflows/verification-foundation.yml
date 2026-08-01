@@ -1,4 +1,4 @@
-name: Verification foundation
+name: Forecast Journey verification
 
 on:
   pull_request:
@@ -13,61 +13,36 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  webkit-verification:
-    name: WebKit capture and accessibility
+  test-and-verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
-
+    timeout-minutes: 30
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v6
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v6
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
           package-manager-cache: false
-
-      - name: Install verification dependencies
+      - name: Install dependencies
         run: npm install --no-audit --no-fund
-
-      - name: Install Playwright WebKit and system dependencies
+      - name: Install WebKit
         run: npx playwright install --with-deps webkit
-
-      - name: Run viewport, state, and axe capture matrix
+      - name: Unit, build, interaction, accessibility, and capture matrix
         run: npm run test:ci
         env:
           CI: '1'
-          AXE_ENFORCE: '0'
-          VISUAL_COMPARE: '0'
-
-      - name: Generate unapproved visual-comparison candidates
-        run: npx playwright test tests/e2e/visual-comparison.spec.ts --update-snapshots --reporter=list
+      - name: Generate comparison candidates
+        if: always()
+        run: npm run test:visual:capture
         env:
           CI: '1'
           VISUAL_COMPARE: '1'
-
-      - name: Upload screenshots and machine-readable reports
+      - name: Upload captures and reports
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: verification-captures-${{ github.run_id }}
+          name: forecast-journey-verification-${{ github.run_id }}
           path: |
-            artifacts/screenshots/
-            artifacts/metrics/
-            artifacts/accessibility/
-            artifacts/browser/
-            artifacts/reports/
-            artifacts/test-results/
+            artifacts/
             tests/e2e/__screenshots__/
-          if-no-files-found: warn
-          retention-days: 30
-
-      - name: Upload Playwright HTML report
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: playwright-report-${{ github.run_id }}
-          path: artifacts/playwright-report/
           if-no-files-found: warn
           retention-days: 30

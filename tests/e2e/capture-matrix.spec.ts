@@ -17,7 +17,7 @@ for (const viewport of requiredViewports) {
 
     await expect(page).toHaveTitle('Levodopa Day Map');
     await expect(page.locator('#levodopa-day-map')).toBeVisible();
-    await expect(page.locator('#ldm-chart canvas').first()).toBeVisible();
+    await expect(page.locator('#ldm-chart')).toBeVisible();
 
     const name = `current-default-${viewport.id}`;
     await captureScreenshot(page, name);

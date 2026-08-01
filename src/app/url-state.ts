@@ -13,11 +13,22 @@ export interface InitialUrlState {
   importError: string | null;
 }
 
+const STORAGE_KEY = 'levodopa-day-map-schedule-v1';
+
 function decodeSchedule(value: string): Schedule {
   const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
   const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
   const decoded = window.atob(padded);
   return ScheduleSchema.parse(JSON.parse(decoded));
+}
+
+function readSavedSchedule(): Schedule | null {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? ScheduleSchema.parse(JSON.parse(saved)) : null;
+  } catch {
+    return null;
+  }
 }
 
 export function encodeSchedule(schedule: Schedule): string {
@@ -28,8 +39,10 @@ export function readInitialUrlState(): InitialUrlState {
   const params = new URLSearchParams(window.location.search);
   const requestedView = params.get('view');
   const view: AppView = requestedView === 'analyze' || requestedView === 'schedule' ? requestedView : 'my-day';
-  const fixture = SCHEDULE_FIXTURES[params.get('fixture') ?? 'default'] ?? SCHEDULE_FIXTURES.default;
-  let schedule = fixture;
+  const fixtureName = params.get('fixture');
+  let schedule = fixtureName
+    ? (SCHEDULE_FIXTURES[fixtureName] ?? SCHEDULE_FIXTURES.default)
+    : (readSavedSchedule() ?? SCHEDULE_FIXTURES.default);
   let importError: string | null = null;
   const shared = params.get('s');
   if (shared) {

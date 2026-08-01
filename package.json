@@ -10,7 +10,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "test:ci": "npm run test && npm run build && playwright test tests/e2e/capture-matrix.spec.ts tests/e2e/interactions.spec.ts tests/e2e/accessibility.spec.ts",
+    "test:ci": "npm run test && npm run build && playwright test tests/e2e/capture-matrix.spec.ts tests/e2e/interactions.spec.ts tests/e2e/full-story.spec.ts tests/e2e/accessibility.spec.ts",
     "test:capture": "playwright test tests/e2e/capture-matrix.spec.ts",
     "test:a11y": "playwright test tests/e2e/accessibility.spec.ts",
     "test:visual": "VISUAL_COMPARE=1 playwright test tests/e2e/visual-comparison.spec.ts",

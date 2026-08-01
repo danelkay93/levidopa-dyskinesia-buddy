@@ -17,6 +17,8 @@ The deterministic model constants, five-minute sampling, isolated 200 mg control
 - `src/features/schedule` and `src/features/share`: editing and database-free sharing
 - `src/fixtures`: synthetic public fixtures
 
+Analyze and Schedule are loaded as separate application chunks so the primary My Day experience does not eagerly load the technical graph and editor.
+
 ## Design authority
 
 The approved Forecast Journey design package remains the visual and interaction authority. The shadcn-style UI primitives use React Aria Components but are restyled entirely through project-owned semantic tokens.
@@ -24,6 +26,14 @@ The approved Forecast Journey design package remains the visual and interaction 
 ## Responsive correction
 
 The 768-pixel tablet layout uses a narrower persistent detail pane rather than exceeding the viewport. Phone landscape suppresses the empty detail pane and uses a single content column beside the navigation rail. These are structural responsive transformations, not simple scaling.
+
+## State boundaries and persistence
+
+Phone selection sheets close when the user follows their action into Analyze, while the selected dose remains highlighted in the technical curve. Valid locally saved schedules are restored on reload. A malformed shared URL preserves that local schedule and explains the recovery.
+
+## Deployment
+
+The application remains static. A GitHub Pages workflow builds the Vite `dist` directory only after changes reach `main`; this implementation branch does not deploy or merge itself.
 
 ## Browser verification
 

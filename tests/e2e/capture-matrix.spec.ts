@@ -52,3 +52,17 @@ test('reduced motion', async ({ page }) => {
   await openState(page, '/?now=09:30&state=dose-1130');
   await capture(page, 'reduced-motion');
 });
+
+test('dark mode', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openState(page, '/?now=09:30');
+  await capture(page, 'dark-mode');
+});
+
+test('forced colors approximation', async ({ page }) => {
+  await page.emulateMedia({ forcedColors: 'active' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openState(page, '/?now=09:30');
+  await capture(page, 'forced-colors');
+});

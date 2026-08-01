@@ -10,12 +10,11 @@ export function ContextSheet({ open, title, onClose, children }: { open: boolean
   const reduced = useReducedMotion();
 
   if (wide) {
-    return open
-      ? <aside className="context-panel" aria-label={title}>
-          <div className="context-panel__head"><Heading slot="title">{title}</Heading><Button variant="icon" aria-label="Close details" onPress={onClose}><XIcon size={22}/></Button></div>
-          {children}
-        </aside>
-      : <aside className="context-panel context-panel--empty" aria-label="Selection details"><p>Select a dose or period to see its explanation here.</p></aside>;
+    if (!open) return null;
+    return <aside className="context-panel" aria-label={title}>
+      <div className="context-panel__head"><Heading slot="title">{title}</Heading><Button variant="icon" aria-label="Close details" onPress={onClose}><XIcon size={22}/></Button></div>
+      {children}
+    </aside>;
   }
 
   return <AnimatePresence initial={!reduced}>{open ? <ModalOverlay isOpen isDismissable onOpenChange={(value) => { if (!value) onClose(); }} className="sheet-overlay">

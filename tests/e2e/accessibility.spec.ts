@@ -36,7 +36,25 @@ for (const [name, path] of states) {
         };
       })
       .filter((target) => target.width > 1 && target.height > 1));
-    const undersized = targets.filter((target) => target.width < 44 || target.height < 44);
-    expect(undersized).toEqual([]);
+    expect(targets.filter((target) => target.width < 44 || target.height < 44)).toEqual([]);
+
+    const importantTargets = await page.locator([
+      '.primary-nav__item',
+      '.dose-station',
+      '.app-header > .button',
+      '.selection-action',
+      '.add-dose',
+      '.analyze-tabs [role=tab]',
+    ].join(',')).evaluateAll((elements) => elements
+      .map((element) => {
+        const rect = element.getBoundingClientRect();
+        return {
+          width: rect.width,
+          height: rect.height,
+          label: element.getAttribute('aria-label') || element.textContent,
+        };
+      })
+      .filter((target) => target.width > 1 && target.height > 1));
+    expect(importantTargets.filter((target) => target.width < 52 || target.height < 52)).toEqual([]);
   });
 }

@@ -3,6 +3,41 @@
   color: var(--text-primary);
 }
 
+.dose-station--next {
+  display: block;
+  min-height: 158px;
+  padding: 16px 44px 16px 18px;
+}
+
+.dose-station--next .dose-station__copy {
+  padding-right: 70px;
+}
+
+.dose-station--next .dose-station__amount {
+  white-space: nowrap;
+}
+
+.dose-station--next .dose-station__visual {
+  display: contents;
+}
+
+.dose-station--next .tablet-illustration {
+  position: absolute;
+  top: 16px;
+  right: 50px;
+}
+
+.dose-station--next .dose-station__forecast {
+  position: absolute;
+  right: 48px;
+  bottom: 17px;
+  max-width: calc(100% - 72px);
+}
+
+.view--analyze > .view-heading {
+  margin-top: 0;
+}
+
 @media (min-width: 768px) and (max-width: 999px) and (min-height: 521px) {
   .app-shell {
     padding-left: 96px;
@@ -46,5 +81,23 @@
 
   .context-panel--empty {
     display: none;
+  }
+}
+
+@media (max-width: 359px) {
+  .dose-station--next {
+    min-height: 170px;
+  }
+
+  .dose-station--next .dose-station__copy {
+    padding-right: 52px;
+  }
+
+  .dose-station--next .tablet-illustration {
+    right: 42px;
+  }
+
+  .dose-station--next .dose-station__forecast {
+    right: 38px;
   }
 }

@@ -21,6 +21,10 @@ The deterministic model constants, five-minute sampling, isolated 200 mg control
 
 The approved Forecast Journey design package remains the visual and interaction authority. The shadcn-style UI primitives use React Aria Components but are restyled entirely through project-owned semantic tokens.
 
+## Responsive correction
+
+The 768-pixel tablet layout uses a narrower persistent detail pane rather than exceeding the viewport. Phone landscape suppresses the empty detail pane and uses a single content column beside the navigation rail. These are structural responsive transformations, not simple scaling.
+
 ## Browser verification
 
 The cloud Browser plugin was not available in this implementation session. Playwright WebKit is therefore the rapid rendered-regression layer. Real Mobile Safari remains a release check for safe-area behavior, dynamic browser chrome, VoiceOver, native sharing, virtual-keyboard behavior, and physical motor usability.

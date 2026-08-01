@@ -32,6 +32,13 @@ for (const [name, path] of states) {
   });
 }
 
+test('selected dose tablet layout', async ({ page }) => {
+  await page.setViewportSize({ width: 768, height: 1024 });
+  const errors = await openState(page, '/?now=09:30&state=dose-1130');
+  await capture(page, 'selected-dose-tablet-768');
+  expect(errors).toEqual([]);
+});
+
 test('enlarged text reflows', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openState(page, '/?now=09:30');

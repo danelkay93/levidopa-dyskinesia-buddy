@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
-<title>Levodopa Schedule Map</title>
+<title>Levodopa Day Map</title>
 <style>:root {
   color-scheme: light dark;
   background-color: transparent !important;
@@ -820,30 +820,34 @@ svg {
 </style>
 </head>
 <body>
-<div id="levodopa-schedule-map">
+<div id="levodopa-day-map">
   <style>
-    #levodopa-schedule-map {
+    #levodopa-day-map {
+      --ldm-off: var(--red);
+      --ldm-change: var(--viz-series-2);
+      --ldm-steady: var(--viz-series-3);
+      --ldm-high: var(--viz-series-4);
       width: 100%;
       color: var(--foreground);
       background: transparent;
       font-family: inherit;
     }
-    #levodopa-schedule-map .lsm-head {
+    #levodopa-day-map .ldm-head {
       display: flex;
       flex-wrap: wrap;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
-      gap: 0.45rem 0.8rem;
-      margin-bottom: 0.35rem;
+      gap: 0.45rem 0.85rem;
+      margin-bottom: 0.25rem;
     }
-    #levodopa-schedule-map .lsm-scale {
+    #levodopa-day-map .ldm-scale {
       color: var(--muted-foreground);
       font-size: var(--font-size-small);
     }
-    #levodopa-schedule-map .lsm-key {
+    #levodopa-day-map .ldm-key {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.4rem 0.75rem;
+      gap: 0.35rem 0.7rem;
       align-items: center;
       margin: 0;
       padding: 0;
@@ -851,122 +855,104 @@ svg {
       color: var(--muted-foreground);
       font-size: var(--font-size-small);
     }
-    #levodopa-schedule-map .lsm-key li {
+    #levodopa-day-map .ldm-key li {
       display: inline-flex;
       align-items: center;
       gap: 0.3rem;
       white-space: nowrap;
     }
-    #levodopa-schedule-map .lsm-swatch {
+    #levodopa-day-map .ldm-swatch {
       width: 1.15rem;
       height: 0.62rem;
       flex: 0 0 auto;
-      border-radius: 0.18rem;
+      border-radius: 0.2rem;
       background-color: var(--swatch-color);
       background-image: var(--swatch-pattern);
+      background-size: var(--swatch-size, auto);
     }
-    #levodopa-schedule-map .lsm-off {
-      --swatch-color: color-mix(in srgb, var(--viz-series-5) 45%, transparent);
-      --swatch-pattern: radial-gradient(circle, var(--viz-series-5) 0 1px, transparent 1.3px);
-      background-size: 5px 5px;
+    #levodopa-day-map .ldm-off {
+      --swatch-color: color-mix(in srgb, var(--ldm-off) 35%, transparent);
+      --swatch-pattern: radial-gradient(circle, var(--ldm-off) 0 1px, transparent 1.3px);
+      --swatch-size: 5px 5px;
     }
-    #levodopa-schedule-map .lsm-diphasic {
-      --swatch-color: color-mix(in srgb, var(--viz-series-2) 40%, transparent);
-      --swatch-pattern: repeating-linear-gradient(45deg, transparent 0 3px, color-mix(in srgb, var(--viz-series-2) 75%, transparent) 3px 4px);
+    #levodopa-day-map .ldm-change {
+      --swatch-color: color-mix(in srgb, var(--ldm-change) 34%, transparent);
+      --swatch-pattern: repeating-linear-gradient(45deg, transparent 0 3px, color-mix(in srgb, var(--ldm-change) 72%, transparent) 3px 4px);
     }
-    #levodopa-schedule-map .lsm-square {
-      --swatch-color: color-mix(in srgb, var(--viz-series-3) 40%, transparent);
-      --swatch-pattern: repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in srgb, var(--viz-series-3) 70%, transparent) 3px 4px);
+    #levodopa-day-map .ldm-steady {
+      --swatch-color: color-mix(in srgb, var(--ldm-steady) 32%, transparent);
+      --swatch-pattern: repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in srgb, var(--ldm-steady) 68%, transparent) 3px 4px);
     }
-    #levodopa-schedule-map .lsm-peak {
-      --swatch-color: color-mix(in srgb, var(--viz-series-4) 38%, transparent);
-      --swatch-pattern: repeating-linear-gradient(135deg, transparent 0 3px, color-mix(in srgb, var(--viz-series-4) 75%, transparent) 3px 4px);
+    #levodopa-day-map .ldm-high {
+      --swatch-color: color-mix(in srgb, var(--ldm-high) 32%, transparent);
+      --swatch-pattern: repeating-linear-gradient(135deg, transparent 0 3px, color-mix(in srgb, var(--ldm-high) 72%, transparent) 3px 4px);
     }
-    #levodopa-schedule-map .lsm-chart {
+    #levodopa-day-map .ldm-chart {
       width: 100%;
-      height: 455px;
-      min-height: 410px;
+      height: 548px;
+      min-height: 520px;
     }
-    #levodopa-schedule-map .lsm-inspector {
+    #levodopa-day-map .ldm-inspector {
       display: grid;
       grid-template-columns: auto minmax(0, 1fr);
       gap: 0.55rem;
       align-items: start;
-      margin-top: 0.4rem;
-      min-height: 4.1rem;
+      margin-top: 0.35rem;
+      min-height: 3.8rem;
     }
-    #levodopa-schedule-map .lsm-inspector-icon {
+    #levodopa-day-map .ldm-inspector-icon {
       display: grid;
-      width: 1.8rem;
-      height: 1.8rem;
+      width: 2rem;
+      height: 2rem;
       place-items: center;
       border-radius: 50%;
       color: var(--primary-foreground);
-      background: var(--viz-series-1);
+      background: var(--primary);
+    }
+    #levodopa-day-map .ldm-inspector-title {
       font-weight: 500;
     }
-    #levodopa-schedule-map .lsm-inspector-title {
-      font-weight: 500;
-    }
-    #levodopa-schedule-map .lsm-inspector-copy {
-      margin-top: 0.12rem;
+    #levodopa-day-map .ldm-inspector-copy {
+      margin-top: 0.1rem;
       color: var(--muted-foreground);
       font-size: var(--font-size-small);
     }
-    #levodopa-schedule-map .lsm-phase-readout {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.25rem 0.55rem;
-      margin-top: 0.3rem;
-      font-size: var(--font-size-small);
+    #levodopa-day-map .ldm-schedule {
+      margin-top: 0.65rem;
     }
-    #levodopa-schedule-map .lsm-phase-readout span {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-    }
-    #levodopa-schedule-map .lsm-phase-dot {
-      width: 0.45rem;
-      height: 0.45rem;
-      border-radius: 50%;
-      background: var(--phase-color);
-    }
-    #levodopa-schedule-map .lsm-schedule {
-      margin-top: 0.7rem;
-    }
-    #levodopa-schedule-map .lsm-schedule summary {
+    #levodopa-day-map .ldm-schedule summary {
       cursor: pointer;
       font-weight: 500;
     }
-    #levodopa-schedule-map .lsm-dose-list {
+    #levodopa-day-map .ldm-dose-list {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
       gap: 0.5rem;
       margin-top: 0.55rem;
     }
-    #levodopa-schedule-map .lsm-dose-row {
+    #levodopa-day-map .ldm-dose-row {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 0.35rem;
     }
-    #levodopa-schedule-map .lsm-dose-row span {
+    #levodopa-day-map .ldm-dose-row span {
       display: block;
       margin-bottom: 0.15rem;
       color: var(--muted-foreground);
       font-size: var(--font-size-small);
     }
-    #levodopa-schedule-map .lsm-schedule-actions {
+    #levodopa-day-map .ldm-schedule-actions {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       gap: 0.45rem;
       margin-top: 0.55rem;
     }
-    #levodopa-schedule-map .lsm-share-status {
+    #levodopa-day-map .ldm-share-status {
       color: var(--muted-foreground);
       font-size: var(--font-size-small);
     }
-    #levodopa-schedule-map .lsm-disclaimer {
+    #levodopa-day-map .ldm-disclaimer {
       margin-top: 0.75rem;
       padding-top: 0.6rem;
       border-top: 1px solid var(--border);
@@ -974,50 +960,46 @@ svg {
       font-size: var(--font-size-small);
     }
     @media (max-width: 520px) {
-      #levodopa-schedule-map .lsm-head {
-        align-items: flex-start;
-      }
-      #levodopa-schedule-map .lsm-key {
+      #levodopa-day-map .ldm-key {
         gap: 0.3rem 0.55rem;
       }
-      #levodopa-schedule-map .lsm-chart {
-        height: 510px;
-        min-height: 470px;
+      #levodopa-day-map .ldm-chart {
+        height: 620px;
+        min-height: 590px;
       }
     }
   </style>
 
-  <div class="lsm-head">
-    <div class="lsm-scale">Relative exposure · one isolated 200 mg CR peak = 100%</div>
-    <ul class="lsm-key" aria-label="Phase fill key">
-      <li><span class="lsm-swatch lsm-off" aria-hidden="true"></span>Low / OFF</li>
-      <li><span class="lsm-swatch lsm-diphasic" aria-hidden="true"></span>Diphasic ↗ ↘</li>
-      <li><span class="lsm-swatch lsm-square" aria-hidden="true"></span>ON / square-wave</li>
-      <li><span class="lsm-swatch lsm-peak" aria-hidden="true"></span>Peak-dose</li>
+  <div class="ldm-head">
+    <div class="ldm-scale">100% = one full 200 mg CR tablet · deeper fill = stronger relative signal today</div>
+    <ul class="ldm-key" aria-label="Curve fill key">
+      <li><span class="ldm-swatch ldm-off" aria-hidden="true"></span>OFF / low</li>
+      <li><span class="ldm-swatch ldm-change" aria-hidden="true"></span>Changing level</li>
+      <li><span class="ldm-swatch ldm-steady" aria-hidden="true"></span>Steady ON</li>
+      <li><span class="ldm-swatch ldm-high" aria-hidden="true"></span>High / peak</li>
     </ul>
   </div>
 
-  <div id="lsm-chart" class="lsm-chart" role="img" aria-label="Interactive 24-hour relative levodopa exposure curve with phase fills, dose markers, and schedule signals"></div>
+  <div id="ldm-chart" class="ldm-chart" role="img" aria-label="Interactive 24-hour relative levodopa schedule curve with dose pills, individual dose contributions, OFF periods, fast transitions, and dose-spacing braces"></div>
 
-  <div class="lsm-inspector card" aria-live="polite">
-    <span id="lsm-inspector-icon" class="lsm-inspector-icon" aria-hidden="true">◆</span>
+  <div class="ldm-inspector card" aria-live="polite">
+    <span id="ldm-inspector-icon" class="ldm-inspector-icon" aria-hidden="true"><i data-lucide="activity"></i></span>
     <div>
-      <div id="lsm-inspector-title" class="lsm-inspector-title">Day high</div>
-      <div id="lsm-inspector-copy" class="lsm-inspector-copy">Tap anywhere on the curve or a signal icon.</div>
-      <div id="lsm-phase-readout" class="lsm-phase-readout"></div>
+      <div id="ldm-inspector-title" class="ldm-inspector-title">Tap the curve, a pill, or a marker</div>
+      <div id="ldm-inspector-copy" class="ldm-inspector-copy">The graph will explain that part of the day here.</div>
     </div>
   </div>
 
-  <details class="lsm-schedule">
-    <summary id="lsm-schedule-summary">Schedule · 4 doses</summary>
-    <div id="lsm-dose-list" class="lsm-dose-list"></div>
-    <div class="lsm-schedule-actions">
-      <button id="lsm-share" class="btn" type="button">Share this schedule</button>
-      <span id="lsm-share-status" class="lsm-share-status" aria-live="polite"></span>
+  <details class="ldm-schedule">
+    <summary id="ldm-schedule-summary">Edit doses</summary>
+    <div id="ldm-dose-list" class="ldm-dose-list"></div>
+    <div class="ldm-schedule-actions">
+      <button id="ldm-share" class="btn" type="button"><i data-lucide="share-2" aria-hidden="true"></i> Share schedule</button>
+      <span id="ldm-share-status" class="ldm-share-status" aria-live="polite"></span>
     </div>
   </details>
 
-  <div class="lsm-disclaimer">Exploratory schedule model—not measured blood levels or dosing advice. Medication changes belong with the movement-disorders team.</div>
+  <div class="ldm-disclaimer">A schedule-shape explainer, not measured levodopa levels or dosing advice. The colored windows are transparent heuristics to discuss with the movement-disorders team.</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
@@ -1025,30 +1007,31 @@ svg {
 (function () {
   "use strict";
 
-  var root = document.getElementById("levodopa-schedule-map");
-  var chartNode = document.getElementById("lsm-chart");
+  var root = document.getElementById("levodopa-day-map");
+  var chartNode = document.getElementById("ldm-chart");
   if (!root || !chartNode || typeof echarts === "undefined") return;
 
   var DAY = 1440;
   var DISPLAY_START = 360;
   var DISPLAY_END = 1800;
   var STEP = 5;
+  var PRACTICAL_ZERO = 0.08;
   var TIMES = [];
   for (var minute = DISPLAY_START; minute <= DISPLAY_END; minute += STEP) TIMES.push(minute);
 
   var doses = [
-    { time: "08:00", mg: 200 },
-    { time: "12:00", mg: 100 },
-    { time: "16:00", mg: 100 },
-    { time: "20:00", mg: 100 }
+    { time: "07:30", mg: 200 },
+    { time: "11:30", mg: 100 },
+    { time: "15:00", mg: 100 },
+    { time: "19:00", mg: 100 }
   ];
 
   var PHASES = [
-    { key: "off", label: "Low / OFF", short: "Low/OFF", color: "--viz-series-5", pattern: "dots", minimum: 0.22 },
-    { key: "rising", label: "Rising diphasic", short: "Diphasic ↗", color: "--viz-series-2", pattern: "diagonal", minimum: 0.10 },
-    { key: "square", label: "ON / square-wave", short: "Square-wave", color: "--viz-series-3", pattern: "horizontal", minimum: 0.18 },
-    { key: "peak", label: "Peak-dose", short: "Peak-dose", color: "--viz-series-4", pattern: "cross", minimum: 0.10 },
-    { key: "falling", label: "Falling diphasic", short: "Diphasic ↘", color: "--viz-series-2", pattern: "diagonal", minimum: 0.10 }
+    { key: "off", label: "OFF / low", color: "--red", pattern: "dots", minimum: 0.24 },
+    { key: "rising", label: "Changing level up", color: "--viz-series-2", pattern: "diagonal", minimum: 0.10 },
+    { key: "steady", label: "Steady ON", color: "--viz-series-3", pattern: "horizontal", minimum: 0.16 },
+    { key: "high", label: "High / peak", color: "--viz-series-4", pattern: "cross", minimum: 0.10 },
+    { key: "falling", label: "Changing level down", color: "--viz-series-2", pattern: "diagonal", minimum: 0.10 }
   ];
 
   var PARAMS = {
@@ -1062,21 +1045,20 @@ svg {
     bioavailability: 0.725
   };
 
-  function css(name, fallback) {
-    var value = getComputedStyle(root).getPropertyValue(name).trim();
-    return value || fallback;
+  function resolvedColor(name, fallback) {
+    var probe = document.createElement("span");
+    probe.style.color = "var(" + name + ", " + fallback + ")";
+    probe.style.display = "none";
+    root.appendChild(probe);
+    var value = getComputedStyle(probe).color || fallback;
+    probe.remove();
+    return value;
   }
 
   function alpha(color, opacity) {
-    if (color.indexOf("rgb(") === 0) return color.replace("rgb(", "rgba(").replace(")", ", " + opacity + ")");
-    if (color.indexOf("rgba(") === 0) return color.replace(/,[^,]+\)$/, ", " + opacity + ")");
-    if (color.charAt(0) === "#") {
-      var hex = color.slice(1);
-      if (hex.length === 3) hex = hex.split("").map(function (item) { return item + item; }).join("");
-      var number = parseInt(hex, 16);
-      return "rgba(" + ((number >> 16) & 255) + ", " + ((number >> 8) & 255) + ", " + (number & 255) + ", " + opacity + ")";
-    }
-    return color;
+    var values = String(color).match(/[\d.]+/g);
+    if (!values || values.length < 3) return color;
+    return "rgba(" + values[0] + ", " + values[1] + ", " + values[2] + ", " + opacity + ")";
   }
 
   function clamp(value, low, high) {
@@ -1090,25 +1072,28 @@ svg {
   }
 
   function timeToMinute(value) {
-    var parts = value.split(":").map(Number);
+    var parts = String(value).split(":").map(Number);
     return parts[0] * 60 + parts[1];
   }
 
-  function minuteToTime(value, includeDay) {
-    var day = Math.floor(value / DAY);
+  function minuteToTime(value) {
     var normalized = ((Math.round(value) % DAY) + DAY) % DAY;
     var hour = Math.floor(normalized / 60);
     var minute = normalized % 60;
-    var label = String(hour).padStart(2, "0") + ":" + String(minute).padStart(2, "0");
-    return includeDay && day > 0 ? label + " +1" : label;
+    return String(hour).padStart(2, "0") + ":" + String(minute).padStart(2, "0");
   }
 
-  function durationLabel(minutes) {
-    var hours = Math.floor(minutes / 60);
-    var rest = Math.round(minutes % 60);
-    if (!rest) return hours + " h";
-    if (!hours) return rest + " min";
-    return hours + " h " + rest + " min";
+  function axisTime(value) {
+    if (Math.round(value) === DISPLAY_END) return "06:00\nnext";
+    return minuteToTime(value);
+  }
+
+  function durationCompact(minutes) {
+    var rounded = Math.max(0, Math.round(minutes));
+    var hours = Math.floor(rounded / 60);
+    var rest = rounded % 60;
+    if (!hours) return rest + "m";
+    return hours + "h" + (rest ? " " + rest + "m" : "");
   }
 
   function parseSharedSchedule() {
@@ -1131,7 +1116,7 @@ svg {
     doses = shared;
   } else {
     try {
-      var saved = JSON.parse(localStorage.getItem("levodopa-schedule-map-doses-v2") || "null");
+      var saved = JSON.parse(localStorage.getItem("levodopa-day-map-doses-v3") || "null");
       if (Array.isArray(saved) && saved.length === 4 && saved.every(function (dose) {
         return /^\d{2}:\d{2}$/.test(dose.time) && Number(dose.mg) >= 25 && Number(dose.mg) <= 400;
       })) {
@@ -1189,13 +1174,23 @@ svg {
     return output;
   }
 
+  function practicalLevel(value) {
+    if (!Number.isFinite(value) || value <= PRACTICAL_ZERO) return 0;
+    return (value - PRACTICAL_ZERO) / (1 - PRACTICAL_ZERO);
+  }
+
   function referenceModel() {
     var refTimes = [];
     for (var minute = 0; minute <= 720; minute += STEP) refTimes.push(minute);
-    var curve = effectSite(plasmaCurve(refTimes, 0, 200, PARAMS), PARAMS.effectHalfLife, STEP);
-    var peak = Math.max.apply(null, curve) || 1;
-    var normalized = curve.map(function (value) { return value / peak; });
-    return { peak: peak, curve: normalized, times: refTimes };
+    var raw = effectSite(plasmaCurve(refTimes, 0, 200, PARAMS), PARAMS.effectHalfLife, STEP);
+    var peak = Math.max.apply(null, raw) || 1;
+    var normalized = raw.map(function (value) { return value / peak; });
+    return {
+      peak: peak,
+      raw: normalized,
+      visible: normalized.map(practicalLevel),
+      times: refTimes
+    };
   }
 
   var REFERENCE = referenceModel();
@@ -1221,11 +1216,20 @@ svg {
           mg: dose.mg,
           doseIndex: doseIndex,
           dayOffset: dayOffset,
-          curve: curve
+          curve: curve,
+          displayCurve: new Array(TIMES.length).fill(0)
         });
       });
     });
-    return { total: addCurves(occurrences.map(function (item) { return item.curve; })), occurrences: occurrences };
+    var rawTotal = addCurves(occurrences.map(function (item) { return item.curve; }));
+    var total = rawTotal.map(practicalLevel);
+    for (var index = 0; index < TIMES.length; index++) {
+      var ratio = rawTotal[index] > 0 ? total[index] / rawTotal[index] : 0;
+      occurrences.forEach(function (occurrence) {
+        occurrence.displayCurve[index] = occurrence.curve[index] * ratio;
+      });
+    }
+    return { rawTotal: rawTotal, total: total, occurrences: occurrences };
   }
 
   function slopeAt(curve, index) {
@@ -1237,34 +1241,35 @@ svg {
   }
 
   function referenceSlopeScale() {
-    var rises = REFERENCE.curve.map(function (_, index) { return slopeAt(REFERENCE.curve, index); });
+    var slopes = REFERENCE.visible.map(function (_, index) { return slopeAt(REFERENCE.visible, index); });
     return {
-      rise: Math.max.apply(null, rises) || 1,
-      fall: Math.abs(Math.min.apply(null, rises)) || 1
+      rise: Math.max.apply(null, slopes) || 1,
+      fall: Math.abs(Math.min.apply(null, slopes)) || 1
     };
   }
 
   var SLOPE_SCALE = referenceSlopeScale();
 
   function phaseScores(curve) {
-    var raw = { off: [], rising: [], square: [], peak: [], falling: [] };
+    var raw = { off: [], rising: [], steady: [], high: [], falling: [] };
     for (var index = 0; index < curve.length; index++) {
       var level = curve[index];
       var slope = slopeAt(curve, index);
-      var risingRate = clamp(slope / SLOPE_SCALE.rise, 0, 1.5);
-      var fallingRate = clamp(-slope / SLOPE_SCALE.fall, 0, 1.5);
-      var transition = smoothstep(0.16, 0.31, level) * (1 - smoothstep(0.56, 0.74, level));
-      raw.off.push(1 - smoothstep(0.20, 0.42, level));
-      raw.rising.push(transition * smoothstep(0.05, 0.68, risingRate));
-      raw.square.push(smoothstep(0.40, 0.62, level) * (1 - 0.48 * smoothstep(0.92, 1.18, level)));
-      raw.peak.push(smoothstep(0.72, 1.04, level));
-      raw.falling.push(transition * smoothstep(0.05, 0.68, fallingRate));
+      var risingRate = clamp(slope / SLOPE_SCALE.rise, 0, 1.6);
+      var fallingRate = clamp(-slope / SLOPE_SCALE.fall, 0, 1.6);
+      var changeWindow = smoothstep(0.10, 0.26, level) * (1 - smoothstep(0.62, 0.84, level));
+      var flatness = 1 - smoothstep(0.08, 0.48, Math.abs(slope) / Math.max(SLOPE_SCALE.rise, SLOPE_SCALE.fall));
+      raw.off.push(1 - smoothstep(0.12, 0.38, level));
+      raw.rising.push(changeWindow * smoothstep(0.08, 0.58, risingRate));
+      raw.steady.push(smoothstep(0.38, 0.58, level) * (1 - smoothstep(0.88, 1.08, level)) * (0.55 + 0.45 * flatness));
+      raw.high.push(smoothstep(0.72, 1.04, level));
+      raw.falling.push(changeWindow * smoothstep(0.08, 0.58, fallingRate));
     }
 
     var relative = {};
     PHASES.forEach(function (phase) {
       var maximum = Math.max.apply(null, raw[phase.key]);
-      if (maximum < phase.minimum) {
+      if (!Number.isFinite(maximum) || maximum < phase.minimum) {
         relative[phase.key] = raw[phase.key].map(function () { return 0; });
         return;
       }
@@ -1284,25 +1289,17 @@ svg {
       if ((values[index] < threshold || index === values.length - 1) && start !== null) {
         var endIndex = values[index] < threshold ? index - 1 : index;
         if ((endIndex - start + 1) * STEP >= minimumMinutes) {
-          segments.push({ start: TIMES[start], end: TIMES[endIndex] + STEP });
+          segments.push({
+            start: TIMES[start],
+            end: Math.min(DISPLAY_END, TIMES[endIndex] + STEP),
+            startIndex: start,
+            endIndex: endIndex
+          });
         }
         start = null;
       }
     }
     return segments;
-  }
-
-  function localMaxima(curve, floor) {
-    var points = [];
-    for (var index = 2; index < curve.length - 2; index++) {
-      if (curve[index] < floor || curve[index] < curve[index - 1] || curve[index] <= curve[index + 1]) continue;
-      if (!points.length || TIMES[index] - points[points.length - 1].time > 50) {
-        points.push({ time: TIMES[index], level: curve[index], index: index });
-      } else if (curve[index] > points[points.length - 1].level) {
-        points[points.length - 1] = { time: TIMES[index], level: curve[index], index: index };
-      }
-    }
-    return points;
   }
 
   function contributionShare(model, index) {
@@ -1312,54 +1309,15 @@ svg {
     return total > 0 ? clamp(1 - largest / total, 0, 1) : 0;
   }
 
-  function maximumInRange(curve, start, end) {
-    var first = clamp(Math.floor((start - DISPLAY_START) / STEP), 0, curve.length - 1);
-    var last = clamp(Math.ceil((end - DISPLAY_START) / STEP), 0, curve.length - 1);
-    var maximum = 0;
-    for (var index = first; index <= last; index++) maximum = Math.max(maximum, curve[index]);
-    return maximum;
+  function pointIndexAt(time) {
+    return clamp(Math.round((time - DISPLAY_START) / STEP), 0, TIMES.length - 1);
   }
 
-  function makeSignals(model, phases) {
-    var signals = [];
-    var sorted = doses.map(function (dose) {
-      return { time: timeToMinute(dose.time), mg: dose.mg };
-    }).sort(function (a, b) { return a.time - b.time; });
+  function containingSegment(segments, time) {
+    return segments.find(function (segment) { return time >= segment.start && time <= segment.end; }) || null;
+  }
 
-    sorted.forEach(function (dose, index) {
-      var next = index + 1 < sorted.length ? sorted[index + 1].time : sorted[0].time + DAY;
-      var gap = next - dose.time;
-      var displayStart = Math.max(DISPLAY_START, dose.time);
-      var displayEnd = Math.min(DISPLAY_END, next);
-      if (displayEnd <= displayStart) return;
-      if (gap < 240) {
-        signals.push({
-          mode: "range",
-          icon: "↔",
-          title: "Close interval",
-          timing: minuteToTime(dose.time, true) + "–" + minuteToTime(next, true),
-          copy: durationLabel(gap) + " between doses · controlled-release overlap is likely.",
-          start: displayStart,
-          end: displayEnd,
-          tone: "close",
-          lane: 0
-        });
-      }
-      if (gap > 480) {
-        signals.push({
-          mode: "range",
-          icon: "⋯",
-          title: "Long interval",
-          timing: minuteToTime(dose.time, true) + "–" + minuteToTime(next, true),
-          copy: durationLabel(gap) + " until the next dose · the curve can spend a long stretch low.",
-          start: displayStart,
-          end: displayEnd,
-          tone: "long",
-          lane: 0
-        });
-      }
-    });
-
+  function buildInsights(model, phases) {
     var slopes = model.total.map(function (_, index) { return slopeAt(model.total, index); });
     var riseIndex = 0;
     var fallIndex = 0;
@@ -1370,93 +1328,79 @@ svg {
       if (model.total[index] > model.total[highIndex]) highIndex = index;
     }
 
-    var overlap = contributionShare(model, highIndex);
-    signals.push({
-      mode: "point",
-      icon: "◆",
-      title: overlap >= 0.25 ? "Overlap crest" : "Day high",
-      timing: minuteToTime(TIMES[highIndex], true),
-      copy: Math.round(model.total[highIndex] * 100) + "% of one full-dose peak" + (overlap >= 0.12 ? " · " + Math.round(overlap * 100) + "% comes from overlapping dose tails." : "."),
-      time: TIMES[highIndex],
-      level: model.total[highIndex],
-      tone: "crest"
+    var fastRiseValues = model.total.map(function (level, index) {
+      var speed = clamp(slopes[index] / SLOPE_SCALE.rise, 0, 2);
+      var withinChangeLevel = smoothstep(0.08, 0.22, level) * (1 - smoothstep(0.72, 0.90, level));
+      return speed * withinChangeLevel;
     });
-    signals.push({
-      mode: "point",
-      icon: "↗",
-      title: "Sharpest rise",
-      timing: minuteToTime(TIMES[riseIndex], true),
-      copy: "+" + Math.round(slopes[riseIndex] * 100) + " reference-peak points per hour.",
-      time: TIMES[riseIndex],
-      level: model.total[riseIndex],
-      tone: "rise"
+    var fastFallValues = model.total.map(function (level, index) {
+      var speed = clamp(-slopes[index] / SLOPE_SCALE.fall, 0, 2);
+      var withinChangeLevel = smoothstep(0.08, 0.22, level) * (1 - smoothstep(0.72, 0.90, level));
+      return speed * withinChangeLevel;
     });
-    signals.push({
-      mode: "point",
-      icon: "↘",
-      title: "Sharpest fall",
-      timing: minuteToTime(TIMES[fallIndex], true),
-      copy: Math.round(slopes[fallIndex] * 100) + " reference-peak points per hour.",
-      time: TIMES[fallIndex],
-      level: model.total[fallIndex],
-      tone: "fall"
-    });
+    var risingTransitions = contiguousSegments(fastRiseValues, 0.36, 20);
+    var fallingTransitions = contiguousSegments(fastFallValues, 0.36, 20);
+    var offSegments = contiguousSegments(phases.raw.off, 0.68, 30);
 
-    contiguousSegments(phases.raw.rising, 0.30, 60).forEach(function (segment) {
-      if (TIMES[riseIndex] >= segment.start && TIMES[riseIndex] <= segment.end) return;
-      signals.push({
-        mode: "range",
-        icon: "↗",
-        title: "Extended rise",
-        timing: minuteToTime(segment.start, true) + "–" + minuteToTime(segment.end, true),
-        copy: durationLabel(segment.end - segment.start) + " in a rising transition-shaped region.",
-        start: segment.start,
-        end: segment.end,
-        tone: "transition",
-        bracketLevel: maximumInRange(model.total, segment.start, segment.end) + 0.08
-      });
-    });
-    contiguousSegments(phases.raw.falling, 0.30, 60).forEach(function (segment) {
-      if (TIMES[fallIndex] >= segment.start && TIMES[fallIndex] <= segment.end) return;
-      signals.push({
-        mode: "range",
-        icon: "↘",
-        title: "Extended fall",
-        timing: minuteToTime(segment.start, true) + "–" + minuteToTime(segment.end, true),
-        copy: durationLabel(segment.end - segment.start) + " in a falling transition-shaped region.",
-        start: segment.start,
-        end: segment.end,
-        tone: "transition",
-        bracketLevel: maximumInRange(model.total, segment.start, segment.end) + 0.08
-      });
-    });
-
-    var lowSegments = contiguousSegments(phases.raw.off, 0.68, 60).sort(function (a, b) {
-      return (b.end - b.start) - (a.end - a.start);
-    });
-    if (lowSegments.length) {
-      var low = lowSegments[0];
-      signals.push({
-        mode: "range",
-        icon: "○",
-        title: "Longest low stretch",
-        timing: minuteToTime(low.start, true) + "–" + minuteToTime(low.end, true),
-        copy: durationLabel(low.end - low.start) + " at the low end of this schedule-relative curve.",
-        start: low.start,
-        end: low.end,
-        tone: "low",
-        bracketLevel: maximumInRange(model.total, low.start, low.end) + 0.07
+    var sorted = doses.map(function (dose, doseIndex) {
+      return { time: timeToMinute(dose.time), mg: dose.mg, doseIndex: doseIndex };
+    }).sort(function (a, b) { return a.time - b.time; });
+    var intervals = [];
+    for (index = 0; index < sorted.length - 1; index++) {
+      var gap = sorted[index + 1].time - sorted[index].time;
+      intervals.push({
+        start: sorted[index].time,
+        end: sorted[index + 1].time,
+        duration: gap,
+        close: gap < 240,
+        long: gap > 480,
+        index: index
       });
     }
 
-    return signals.filter(function (signal) {
-      return signal.mode === "point" ? signal.time >= DISPLAY_START && signal.time <= DISPLAY_END : signal.end > DISPLAY_START && signal.start < DISPLAY_END;
-    });
+    var overlap = contributionShare(model, highIndex);
+    var riseSegment = containingSegment(risingTransitions, TIMES[riseIndex]);
+    var fallSegment = containingSegment(fallingTransitions, TIMES[fallIndex]);
+    var points = [
+      {
+        kind: "high",
+        icon: "🎯",
+        time: TIMES[highIndex],
+        level: model.total[highIndex],
+        title: "Today's high",
+        copy: Math.round(model.total[highIndex] * 100) + "% of the full-tablet reference" + (overlap >= 0.12 && model.total[highIndex] >= 0.60 ? " · overlapping dose tails lift this crest." : ".")
+      },
+      {
+        kind: "rise",
+        icon: "📈",
+        time: TIMES[riseIndex],
+        level: model.total[riseIndex],
+        title: "Quickest climb",
+        copy: "Fastest part of the rise" + (riseSegment ? " · the colored transition lasts " + durationCompact(riseSegment.end - riseSegment.start) + "." : ".")
+      },
+      {
+        kind: "fall",
+        icon: "📉",
+        time: TIMES[fallIndex],
+        level: model.total[fallIndex],
+        title: "Quickest drop",
+        copy: "Fastest part of the fall" + (fallSegment ? " · the colored transition lasts " + durationCompact(fallSegment.end - fallSegment.start) + "." : ".")
+      }
+    ];
+
+    return {
+      slopes: slopes,
+      points: points,
+      risingTransitions: risingTransitions,
+      fallingTransitions: fallingTransitions,
+      offSegments: offSegments,
+      intervals: intervals
+    };
   }
 
   function phaseDecal(phase, color, intensity) {
     var base = {
-      color: alpha(color, 0.16 + intensity * 0.22),
+      color: alpha(color, 0.10 + intensity * 0.14),
       backgroundColor: "rgba(0,0,0,0)",
       maxTileWidth: 32,
       maxTileHeight: 32
@@ -1464,8 +1408,8 @@ svg {
     if (phase.pattern === "dots") {
       base.symbol = "circle";
       base.symbolSize = 0.8;
-      base.dashArrayX = [[2, 4]];
-      base.dashArrayY = [[2, 4]];
+      base.dashArrayX = [[5, 5], [0, 5, 5, 0]];
+      base.dashArrayY = [5, 0];
     } else if (phase.pattern === "horizontal") {
       base.symbol = "rect";
       base.symbolSize = 0.8;
@@ -1508,12 +1452,11 @@ svg {
           var topLeft = api.coord([api.value(0), api.value(2)]);
           var topRight = api.coord([api.value(1), api.value(3)]);
           var intensity = api.value(4);
-          var points = [bottomLeft, bottomRight, topRight, topLeft];
           return {
             type: "polygon",
-            shape: { points: points },
+            shape: { points: [bottomLeft, bottomRight, topRight, topLeft] },
             style: {
-              fill: alpha(colors[phase.key], 0.035 + intensity * 0.34),
+              fill: alpha(colors[phase.key], 0.025 + intensity * 0.18),
               decal: phaseDecal(phase, colors[phase.key], intensity)
             }
           };
@@ -1523,246 +1466,526 @@ svg {
     });
   }
 
-  function signalColors() {
+  function maskedLineData(curve, segments) {
+    var active = new Array(curve.length).fill(false);
+    segments.forEach(function (segment) {
+      var start = Math.max(0, segment.startIndex - 1);
+      var end = Math.min(curve.length - 1, segment.endIndex + 1);
+      for (var index = start; index <= end; index++) active[index] = true;
+    });
+    return TIMES.map(function (time, index) { return active[index] ? [time, curve[index]] : [time, null]; });
+  }
+
+  function offLineData(curve, phases) {
+    var active = phases.raw.off.map(function (value, index) { return value >= 0.58 || curve[index] === 0; });
+    return TIMES.map(function (time, index) {
+      var neighbor = active[index] || active[Math.max(0, index - 1)] || active[Math.min(active.length - 1, index + 1)];
+      return neighbor ? [time, curve[index]] : [time, null];
+    });
+  }
+
+  function contributionSeries(model, selectedDose, color) {
+    return model.occurrences.filter(function (occurrence) {
+      return occurrence.dayOffset === 0 && occurrence.time >= DISPLAY_START && occurrence.time <= DISPLAY_END;
+    }).map(function (occurrence) {
+      var selected = occurrence.doseIndex === selectedDose;
+      return {
+        name: "Dose contribution " + occurrence.doseIndex,
+        type: "line",
+        data: TIMES.map(function (time, index) {
+          if (time < occurrence.time || occurrence.displayCurve[index] < 0.004) return [time, null];
+          return [time, occurrence.displayCurve[index]];
+        }),
+        showSymbol: false,
+        connectNulls: false,
+        silent: true,
+        lineStyle: {
+          width: selected ? 2.5 : 1.25,
+          color: alpha(color, selected ? 0.80 : 0.28),
+          type: selected ? "solid" : "dashed"
+        },
+        z: selected ? 5 : 2
+      };
+    });
+  }
+
+  function dosePillSeries(model, maximumY, compact, selectedDose, colors) {
+    var currentDay = model.occurrences.filter(function (occurrence) { return occurrence.dayOffset === 0; });
     return {
-      close: css("--viz-series-2", "#d97706"),
-      long: css("--viz-series-5", "#7c3aed"),
-      crest: css("--viz-series-4", "#db2777"),
-      rise: css("--viz-series-2", "#d97706"),
-      fall: css("--viz-series-6", "#0f766e"),
-      transition: css("--viz-series-2", "#d97706"),
-      low: css("--viz-series-5", "#7c3aed")
+      name: "Dose pills",
+      type: "custom",
+      coordinateSystem: "cartesian2d",
+      clip: false,
+      data: currentDay.map(function (occurrence) {
+        return [occurrence.time, occurrence.mg, occurrence.doseIndex];
+      }),
+      renderItem: function (params, api) {
+        var time = api.value(0);
+        var mg = api.value(1);
+        var doseIndex = api.value(2);
+        var x = api.coord([time, 0])[0];
+        var row = compact ? doseIndex % 2 : 0;
+        var y = compact ? 8 + row * 43 : 10;
+        var width = mg >= 175 ? 66 : 58;
+        var height = 27;
+        var half = mg < 175;
+        var selected = doseIndex === selectedDose;
+        var baseline = api.coord([time, 0]);
+        var guideStart = y + height + 18;
+        var children = [
+          {
+            type: "line",
+            shape: { x1: x, y1: guideStart, x2: baseline[0], y2: baseline[1] },
+            style: { stroke: alpha(colors.primary, selected ? 0.42 : 0.20), lineWidth: selected ? 1.5 : 1, lineDash: [3, 5] }
+          },
+          {
+            type: "rect",
+            shape: { x: x - width / 2, y: y, width: width, height: height, r: half ? [2, 14, 14, 2] : 14 },
+            style: { fill: colors.primary, stroke: selected ? colors.foreground : colors.background, lineWidth: selected ? 2.5 : 1.5 }
+          },
+          {
+            type: "text",
+            style: { x: x, y: y + height / 2, text: mg + " mg", fill: colors.primaryForeground, font: "500 11px system-ui", textAlign: "center", textVerticalAlign: "middle" }
+          },
+          {
+            type: "text",
+            style: { x: x, y: y + height + 4, text: minuteToTime(time), fill: colors.muted, font: "500 11px system-ui", textAlign: "center", textVerticalAlign: "top" }
+          }
+        ];
+        return { type: "group", children: children };
+      },
+      encode: { x: 0 },
+      z: 12
     };
   }
 
-  function signalSeries(signals, maximumY, foreground, background) {
-    var tones = signalColors();
+  function intervalBraceSeries(intervals, compact, colors) {
     return {
-      name: "Schedule signals",
+      name: "Dose spacing",
       type: "custom",
       coordinateSystem: "cartesian2d",
-      data: signals.map(function (signal, index) {
-        return signal.mode === "point" ? [signal.time, signal.level, index, 0] : [signal.start, signal.end, index, 1];
+      clip: false,
+      data: intervals.map(function (interval, index) {
+        return [interval.start, interval.end, interval.duration, index];
       }),
       renderItem: function (params, api) {
-        var signal = signals[api.value(2)];
-        var tone = tones[signal.tone] || foreground;
-        if (signal.mode === "point") {
-          var point = api.coord([signal.time, signal.level]);
-          var base = api.coord([signal.time, 0]);
-          return {
-            type: "group",
-            children: [
-              { type: "line", shape: { x1: point[0], y1: base[1], x2: point[0], y2: point[1] }, style: { stroke: alpha(tone, 0.55), lineWidth: 1, lineDash: [4, 4] } },
-              { type: "circle", shape: { cx: point[0], cy: point[1], r: 12 }, style: { fill: tone, stroke: background, lineWidth: 2 } },
-              { type: "text", style: { x: point[0], y: point[1], text: signal.icon, fill: background, font: "500 13px system-ui", textAlign: "center", textVerticalAlign: "middle" } }
-            ]
-          };
+        var interval = intervals[api.value(3)];
+        var start = api.coord([interval.start, 0]);
+        var end = api.coord([interval.end, 0]);
+        var lane = compact ? interval.index % 2 : 0;
+        var y = params.coordSys.y + params.coordSys.height + 58 + lane * 30;
+        var x1 = start[0];
+        var x2 = end[0];
+        var middle = (x1 + x2) / 2;
+        var curl = Math.min(8, Math.max(4, (x2 - x1) * 0.10));
+        var tone = interval.close ? colors.change : interval.long ? colors.off : colors.muted;
+        var label = durationCompact(interval.duration);
+        var hourglassX = middle - (label.length > 3 ? 18 : 13);
+        var children = [
+          { type: "bezierCurve", shape: { x1: x1, y1: y, x2: x1 + curl, y2: y + 7, cpx1: x1, cpy1: y + 5, cpx2: x1 + curl * 0.4, cpy2: y + 7 }, style: { stroke: tone, fill: null, lineWidth: 1.4 } },
+          { type: "line", shape: { x1: x1 + curl, y1: y + 7, x2: middle - curl, y2: y + 7 }, style: { stroke: tone, lineWidth: 1.4 } },
+          { type: "bezierCurve", shape: { x1: middle - curl, y1: y + 7, x2: middle, y2: y + 15, cpx1: middle - curl * 0.25, cpy1: y + 7, cpx2: middle - curl * 0.25, cpy2: y + 15 }, style: { stroke: tone, fill: null, lineWidth: 1.4 } },
+          { type: "bezierCurve", shape: { x1: middle, y1: y + 15, x2: middle + curl, y2: y + 7, cpx1: middle + curl * 0.25, cpy1: y + 15, cpx2: middle + curl * 0.25, cpy2: y + 7 }, style: { stroke: tone, fill: null, lineWidth: 1.4 } },
+          { type: "line", shape: { x1: middle + curl, y1: y + 7, x2: x2 - curl, y2: y + 7 }, style: { stroke: tone, lineWidth: 1.4 } },
+          { type: "bezierCurve", shape: { x1: x2 - curl, y1: y + 7, x2: x2, y2: y, cpx1: x2 - curl * 0.4, cpy1: y + 7, cpx2: x2, cpy2: y + 5 }, style: { stroke: tone, fill: null, lineWidth: 1.4 } },
+          { type: "polyline", shape: { points: [[hourglassX - 4, y + 20], [hourglassX + 4, y + 20], [hourglassX - 4, y + 29], [hourglassX + 4, y + 29], [hourglassX - 4, y + 20]] }, style: { fill: null, stroke: tone, lineWidth: 1.1, lineJoin: "round" } },
+          { type: "text", style: { x: middle + 5, y: y + 17, text: label, fill: tone, font: "500 11px system-ui", textAlign: "center", textVerticalAlign: "top" } }
+        ];
+        if (interval.close) {
+          children.push(
+            { type: "polygon", shape: { points: [[middle, y - 8], [middle - 5, y], [middle + 5, y]] }, style: { fill: tone } },
+            { type: "text", style: { x: middle, y: y - 3, text: "!", fill: colors.background, font: "500 8px system-ui", textAlign: "center", textVerticalAlign: "middle" } }
+          );
         }
+        return {
+          type: "group",
+          children: children
+        };
+      },
+      encode: { x: [0, 1] },
+      z: 11
+    };
+  }
 
-        var start = api.coord([signal.start, 0]);
-        var end = api.coord([signal.end, maximumY]);
-        var bracketValue = signal.bracketLevel === undefined ? maximumY * 0.94 : clamp(signal.bracketLevel, maximumY * 0.08, maximumY * 0.88);
-        var laneY = api.coord([signal.start, bracketValue])[1];
-        var middleX = (start[0] + end[0]) / 2;
+  function offPeriodSeries(offSegments, colors) {
+    return {
+      name: "OFF periods",
+      type: "custom",
+      coordinateSystem: "cartesian2d",
+      data: offSegments.map(function (segment, index) { return [segment.start, segment.end, index]; }),
+      renderItem: function (params, api) {
+        var segment = offSegments[api.value(2)];
+        var start = api.coord([segment.start, 0]);
+        var end = api.coord([segment.end, 0]);
+        var middle = (start[0] + end[0]) / 2;
+        var label = "☾ OFF for " + durationCompact(segment.end - segment.start);
+        var estimatedWidth = Math.min(118, Math.max(74, label.length * 6.2));
+        var x = clamp(middle, params.coordSys.x + estimatedWidth / 2, params.coordSys.x + params.coordSys.width - estimatedWidth / 2);
+        var y = params.coordSys.y + params.coordSys.height - 19;
         return {
           type: "group",
           children: [
-            { type: "line", shape: { x1: start[0], y1: laneY, x2: end[0], y2: laneY }, style: { stroke: alpha(tone, 0.72), lineWidth: 1.5, lineDash: [5, 4] } },
-            { type: "line", shape: { x1: start[0], y1: laneY - 6, x2: start[0], y2: laneY + 6 }, style: { stroke: alpha(tone, 0.8), lineWidth: 1.5 } },
-            { type: "line", shape: { x1: end[0], y1: laneY - 6, x2: end[0], y2: laneY + 6 }, style: { stroke: alpha(tone, 0.8), lineWidth: 1.5 } },
-            { type: "circle", shape: { cx: middleX, cy: laneY, r: 11 }, style: { fill: tone, stroke: background, lineWidth: 2 } },
-            { type: "text", style: { x: middleX, y: laneY, text: signal.icon, fill: background, font: "500 13px system-ui", textAlign: "center", textVerticalAlign: "middle" } }
+            { type: "line", shape: { x1: middle, y1: y + 8, x2: middle, y2: start[1] }, style: { stroke: alpha(colors.off, 0.45), lineWidth: 1 } },
+            {
+              type: "text",
+              style: {
+                x: x,
+                y: y,
+                text: label,
+                fill: colors.off,
+                font: "500 11px system-ui",
+                textAlign: "center",
+                textVerticalAlign: "middle",
+                backgroundColor: alpha(colors.background, 0.90),
+                borderRadius: 10,
+                padding: [3, 6]
+              }
+            }
           ]
         };
       },
       encode: { x: [0, 1] },
-      tooltip: { show: false },
-      z: 9
-    };
-  }
-
-  function doseSeries(model, maximumY, seriesColor, background) {
-    var visible = model.occurrences.filter(function (occurrence) {
-      return occurrence.time >= DISPLAY_START && occurrence.time <= DISPLAY_END;
-    });
-    return {
-      name: "Doses",
-      type: "scatter",
-      data: visible.map(function (occurrence) { return [occurrence.time, maximumY * 0.035, occurrence.mg]; }),
-      symbol: "roundRect",
-      symbolSize: function (value) { return value[2] >= 200 ? [28, 20] : [24, 18]; },
-      itemStyle: { color: seriesColor, borderColor: background, borderWidth: 1.5 },
-      label: { show: true, color: background, fontSize: 10, fontWeight: 500, formatter: function (params) { return params.value[2]; } },
-      tooltip: { formatter: function (params) { return "<strong>" + minuteToTime(params.value[0], true) + " dose</strong><br>" + params.value[2] + " mg levodopa (CR)"; } },
       z: 10
     };
   }
 
+  function pointMarkerSeries(points, colors, compact) {
+    return {
+      name: "Reference points",
+      type: "custom",
+      coordinateSystem: "cartesian2d",
+      clip: false,
+      data: points.map(function (point, index) { return [point.time, point.level, index]; }),
+      renderItem: function (params, api) {
+        var pointData = points[api.value(2)];
+        var point = api.coord([pointData.time, pointData.level]);
+        var markerY = params.coordSys.y + params.coordSys.height + 29;
+        var tone = pointData.kind === "high" ? colors.high : colors.change;
+        var children = [
+          { type: "line", shape: { x1: point[0], y1: markerY - 10, x2: point[0], y2: point[1] }, style: { stroke: alpha(tone, 0.52), lineWidth: 1, lineDash: [4, 4] } },
+          { type: "circle", shape: { cx: point[0], cy: point[1], r: 4.5 }, style: { fill: tone, stroke: colors.background, lineWidth: 1.5 } },
+          { type: "circle", shape: { cx: point[0], cy: markerY, r: 9 }, style: { fill: colors.background, stroke: tone, lineWidth: 1.5 } }
+        ];
+        if (pointData.kind === "high") {
+          children.push(
+            { type: "circle", shape: { cx: point[0], cy: markerY, r: 4 }, style: { fill: null, stroke: tone, lineWidth: 1.2 } },
+            { type: "circle", shape: { cx: point[0], cy: markerY, r: 1.8 }, style: { fill: tone } }
+          );
+        } else {
+          var direction = pointData.kind === "rise" ? -1 : 1;
+          var trendPoints = pointData.kind === "rise"
+            ? [[point[0] - 5, markerY + 4], [point[0] - 2, markerY], [point[0] + 1, markerY + 2], [point[0] + 5, markerY - 4]]
+            : [[point[0] - 5, markerY - 4], [point[0] - 2, markerY], [point[0] + 1, markerY - 2], [point[0] + 5, markerY + 4]];
+          children.push(
+            { type: "polyline", shape: { points: trendPoints }, style: { fill: null, stroke: tone, lineWidth: 1.5, lineJoin: "round", lineCap: "round" } },
+            { type: "line", shape: { x1: point[0] + 5, y1: markerY + direction * 4, x2: point[0] + 2, y2: markerY + direction * 4 }, style: { stroke: tone, lineWidth: 1.2 } },
+            { type: "line", shape: { x1: point[0] + 5, y1: markerY + direction * 4, x2: point[0] + 5, y2: markerY }, style: { stroke: tone, lineWidth: 1.2 } }
+          );
+        }
+        if (pointData.kind === "high") {
+          var alignRight = point[0] > params.coordSys.x + params.coordSys.width * 0.68;
+          children.push({
+            type: "text",
+            style: {
+              x: point[0] + (alignRight ? -8 : 8),
+              y: point[1] - 9,
+              text: (compact ? "High · " : "Day high · ") + Math.round(pointData.level * 100) + "%",
+              fill: colors.foreground,
+              font: "500 11px system-ui",
+              textAlign: alignRight ? "right" : "left",
+              textVerticalAlign: "bottom",
+              backgroundColor: alpha(colors.background, 0.88),
+              borderRadius: 8,
+              padding: [2, 4]
+            }
+          });
+        }
+        return { type: "group", children: children };
+      },
+      encode: { x: 0, y: 1 },
+      z: 13
+    };
+  }
+
+  function setInspector(icon, title, copy, tone) {
+    var iconNode = document.getElementById("ldm-inspector-icon");
+    iconNode.innerHTML = "<i data-lucide=\"" + icon + "\" aria-hidden=\"true\"></i>";
+    iconNode.style.background = tone;
+    document.getElementById("ldm-inspector-title").textContent = title;
+    document.getElementById("ldm-inspector-copy").textContent = copy;
+    if (globalThis.lucide) globalThis.lucide.createIcons({ attrs: { width: 16, height: 16 } });
+  }
+
+  function previousDose(time) {
+    var sorted = doses.map(function (dose) { return { time: timeToMinute(dose.time), mg: dose.mg }; }).sort(function (a, b) { return a.time - b.time; });
+    var candidates = [];
+    [-1, 0, 1].forEach(function (offset) {
+      sorted.forEach(function (dose) { candidates.push({ time: dose.time + offset * DAY, mg: dose.mg }); });
+    });
+    return candidates.filter(function (dose) { return dose.time <= time; }).sort(function (a, b) { return b.time - a.time; })[0] || null;
+  }
+
   var chart = echarts.init(chartNode, null, { renderer: "svg" });
   var current = null;
+  var selectedDose = -1;
+
+  function colorsForChart() {
+    return {
+      foreground: resolvedColor("--foreground", "#1f2937"),
+      muted: resolvedColor("--muted-foreground", "#667085"),
+      border: resolvedColor("--border", "#d0d5dd"),
+      background: resolvedColor("--background", "#ffffff"),
+      popover: resolvedColor("--popover", "#ffffff"),
+      popoverForeground: resolvedColor("--popover-foreground", "#1f2937"),
+      primary: resolvedColor("--viz-series-1", "#2563eb"),
+      primaryForeground: resolvedColor("--primary-foreground", "#ffffff"),
+      change: resolvedColor("--viz-series-2", "#d97706"),
+      steady: resolvedColor("--viz-series-3", "#16a34a"),
+      high: resolvedColor("--viz-series-4", "#db2777"),
+      off: resolvedColor("--red", "#c62828")
+    };
+  }
 
   function buildOption() {
-    var style = getComputedStyle(root);
-    var foreground = css("--foreground", "#1f2937");
-    var muted = css("--muted-foreground", "#667085");
-    var border = css("--border", "#d0d5dd");
-    var background = css("--background", "#ffffff");
-    var seriesColor = css("--viz-series-1", "#2563eb");
-    var phaseColors = {};
-    PHASES.forEach(function (phase) { phaseColors[phase.key] = css(phase.color, "#64748b"); });
-
+    var colors = colorsForChart();
+    var phaseColors = {
+      off: colors.off,
+      rising: colors.change,
+      steady: colors.steady,
+      high: colors.high,
+      falling: colors.change
+    };
     var model = buildModel();
     var phases = phaseScores(model.total);
-    var signals = makeSignals(model, phases);
-    var maximumY = Math.max(1.25, Math.ceil(Math.max.apply(null, model.total) * 10 + 1) / 10);
-    current = { model: model, phases: phases, signals: signals, colors: phaseColors, maximumY: maximumY };
+    var insights = buildInsights(model, phases);
+    var maximum = Math.max.apply(null, model.total);
+    var maximumY = Math.max(1.20, Math.ceil((maximum + 0.10) * 10) / 10);
+    var compact = root.clientWidth < 520;
+    var gridTop = compact ? 98 : 67;
+    var gridBottom = compact ? 125 : 96;
+    current = { model: model, phases: phases, insights: insights, colors: colors, maximumY: maximumY };
 
     var series = phaseAreaSeries(model, phases, phaseColors);
+    contributionSeries(model, selectedDose, colors.primary).forEach(function (item) { series.push(item); });
     series.push({
-      name: "Relative effect-site exposure",
+      name: "Total modeled level",
       type: "line",
       data: TIMES.map(function (time, index) { return [time, model.total[index]]; }),
       showSymbol: false,
-      lineStyle: { width: 3, color: seriesColor },
-      itemStyle: { color: seriesColor },
+      connectNulls: false,
+      lineStyle: { width: 3, color: colors.primary },
+      itemStyle: { color: colors.primary },
       markLine: {
         silent: true,
         symbol: "none",
-        lineStyle: { color: alpha(foreground, 0.42), width: 1.2, type: "dashed" },
+        lineStyle: { color: alpha(colors.foreground, 0.40), width: 1.2, type: "dashed" },
         label: {
           show: true,
           position: "insideEndTop",
-          color: muted,
+          color: colors.muted,
           fontSize: 11,
-          formatter: root.clientWidth < 480 ? "1 full dose" : "1 isolated 200 mg CR peak"
+          formatter: compact ? "full tablet" : "Full-tablet reference"
         },
         data: [{ yAxis: 1 }]
       },
-      labelLayout: { hideOverlap: false },
       tooltip: { show: false },
       z: 6
     });
-    series.push(signalSeries(signals, maximumY, foreground, background));
-    series.push(doseSeries(model, maximumY, seriesColor, background));
+    series.push({
+      name: "OFF curve",
+      type: "line",
+      data: offLineData(model.total, phases),
+      showSymbol: false,
+      connectNulls: false,
+      lineStyle: { width: 4, color: colors.off },
+      silent: true,
+      z: 8
+    });
+    series.push({
+      name: "Fast transition up",
+      type: "line",
+      data: maskedLineData(model.total, insights.risingTransitions),
+      showSymbol: false,
+      connectNulls: false,
+      lineStyle: { width: 4.5, color: colors.change },
+      silent: true,
+      z: 9
+    });
+    series.push({
+      name: "Fast transition down",
+      type: "line",
+      data: maskedLineData(model.total, insights.fallingTransitions),
+      showSymbol: false,
+      connectNulls: false,
+      lineStyle: { width: 4.5, color: colors.change },
+      silent: true,
+      z: 9
+    });
+    series.push(offPeriodSeries(insights.offSegments, colors));
+    series.push(pointMarkerSeries(insights.points, colors, compact));
+    series.push(dosePillSeries(model, maximumY, compact, selectedDose, colors));
+    series.push(intervalBraceSeries(insights.intervals, compact, colors));
 
-    var compact = root.clientWidth < 480;
     return {
       animationDurationUpdate: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 220,
       backgroundColor: "transparent",
-      textStyle: { color: foreground, fontFamily: style.fontFamily },
+      textStyle: { color: colors.foreground, fontFamily: getComputedStyle(root).fontFamily },
       aria: { enabled: true, decal: { show: false } },
-      grid: { left: compact ? 46 : 58, right: compact ? 24 : 16, top: 14, bottom: 40, containLabel: false },
-      tooltip: {
-        trigger: "item",
-        confine: true,
-        backgroundColor: css("--popover", background),
-        borderColor: border,
-        textStyle: { color: css("--popover-foreground", foreground), fontSize: 12 },
-        extraCssText: "max-width:260px;white-space:normal;"
-      },
+      grid: { left: compact ? 42 : 55, right: compact ? 34 : 26, top: gridTop, bottom: gridBottom, containLabel: false },
+      tooltip: { show: false },
       xAxis: {
         type: "value",
         min: DISPLAY_START,
         max: DISPLAY_END,
         interval: compact ? 240 : 180,
-        axisLabel: { color: muted, fontSize: 11, formatter: function (value) { return minuteToTime(value, true).replace(":00", "").replace(" +1", "+1"); } },
-        axisLine: { lineStyle: { color: border } },
+        axisLabel: { color: colors.muted, fontSize: 11, margin: 10, formatter: axisTime },
+        axisLine: { lineStyle: { color: colors.border } },
         axisTick: { show: false },
-        splitLine: { show: true, lineStyle: { color: alpha(border, 0.55), width: 1 } }
+        splitLine: { show: true, lineStyle: { color: alpha(colors.border, 0.55), width: 1 } }
       },
       yAxis: {
         type: "value",
         min: 0,
         max: maximumY,
         interval: 0.5,
-        axisLabel: { color: muted, fontSize: 11, formatter: function (value) { return Math.round(value * 100) + "%"; } },
+        axisLabel: { color: colors.muted, fontSize: 11, formatter: function (value) { return value === 0 ? "0" : Math.round(value * 100) + "%"; } },
         axisLine: { show: false },
         axisTick: { show: false },
-        splitLine: { show: true, lineStyle: { color: alpha(border, 0.55), width: 1 } }
+        splitLine: { show: true, lineStyle: { color: alpha(colors.border, 0.55), width: 1 } }
       },
-      dataZoom: [{ type: "inside", filterMode: "none", zoomOnMouseWheel: true, moveOnMouseMove: true, moveOnMouseWheel: true, preventDefaultMouseMove: false }],
       series: series
     };
   }
 
-  function setInspector(icon, title, copy, color, phases) {
-    var iconNode = document.getElementById("lsm-inspector-icon");
-    iconNode.textContent = icon;
-    iconNode.style.background = color;
-    document.getElementById("lsm-inspector-title").textContent = title;
-    document.getElementById("lsm-inspector-copy").textContent = copy;
-    var readout = document.getElementById("lsm-phase-readout");
-    readout.innerHTML = "";
-    (phases || []).forEach(function (item) {
-      var entry = document.createElement("span");
-      var dot = document.createElement("i");
-      dot.className = "lsm-phase-dot";
-      dot.style.setProperty("--phase-color", item.color);
-      dot.setAttribute("aria-hidden", "true");
-      entry.appendChild(dot);
-      entry.appendChild(document.createTextNode(item.label + " " + Math.round(item.value * 100) + "%"));
-      readout.appendChild(entry);
-    });
+  function describeTime(time) {
+    if (!current || !Number.isFinite(time)) return;
+    var index = pointIndexAt(time);
+    var level = current.model.total[index];
+    var off = current.phases.raw.off[index] >= 0.68;
+    var rising = current.phases.raw.rising[index];
+    var falling = current.phases.raw.falling[index];
+    var steady = current.phases.raw.steady[index];
+    var high = current.phases.raw.high[index];
+    var dose = previousDose(TIMES[index]);
+    var doseText = dose ? " after the " + minuteToTime(dose.time) + " dose" : "";
+    if (level === 0) {
+      setInspector("moon", minuteToTime(TIMES[index]) + " · OFF", "At the practical zero line" + doseText + ".", current.colors.off);
+      return;
+    }
+    if (off) {
+      setInspector("moon", minuteToTime(TIMES[index]) + " · low / OFF", "Modeled level " + Math.round(level * 100) + "% · low and " + (current.insights.slopes[index] >= 0 ? "beginning to rise" : "still falling") + ".", current.colors.off);
+      return;
+    }
+    if (rising >= Math.max(falling, steady, high) && rising >= 0.10) {
+      setInspector("trending-up", minuteToTime(TIMES[index]) + " · changing level", "Modeled level " + Math.round(level * 100) + "% · climbing" + doseText + ".", current.colors.change);
+      return;
+    }
+    if (falling >= Math.max(rising, steady, high) && falling >= 0.10) {
+      setInspector("trending-down", minuteToTime(TIMES[index]) + " · changing level", "Modeled level " + Math.round(level * 100) + "% · wearing down" + doseText + ".", current.colors.change);
+      return;
+    }
+    if (high >= steady && high >= 0.10) {
+      setInspector("gauge", minuteToTime(TIMES[index]) + " · high / peak", "Modeled level " + Math.round(level * 100) + "% · near the strongest part of the day.", current.colors.high);
+      return;
+    }
+    setInspector("activity", minuteToTime(TIMES[index]) + " · steady ON", "Modeled level " + Math.round(level * 100) + "% · comparatively steady" + doseText + ".", current.colors.steady);
   }
 
-  function inspectTime(time) {
-    if (!current) return;
-    var index = clamp(Math.round((time - DISPLAY_START) / STEP), 0, TIMES.length - 1);
-    var slope = slopeAt(current.model.total, index);
-    var ranked = PHASES.map(function (phase) {
-      return { label: phase.short, value: current.phases.relative[phase.key][index], color: current.colors[phase.key] };
-    }).filter(function (item) { return item.value >= 0.12; }).sort(function (a, b) { return b.value - a.value; }).slice(0, 3);
-    var direction = Math.abs(slope) < 0.025 ? "nearly level" : slope > 0 ? "rising " + Math.round(slope * 100) + " points/h" : "falling " + Math.round(Math.abs(slope) * 100) + " points/h";
-    var leading = ranked.length ? ranked[0] : { label: "No strong phase", color: css("--viz-series-1", "#2563eb") };
-    setInspector("•", minuteToTime(TIMES[index], true) + " · " + leading.label, Math.round(current.model.total[index] * 100) + "% of one full-dose peak · " + direction + ".", leading.color, ranked);
+  function inspectPoint(index) {
+    if (!current || !current.insights.points[index]) return;
+    var point = current.insights.points[index];
+    var icon = point.kind === "high" ? "target" : point.kind === "rise" ? "trending-up" : "trending-down";
+    var tone = point.kind === "high" ? current.colors.high : current.colors.change;
+    setInspector(icon, point.title + " · " + minuteToTime(point.time), point.copy, tone);
   }
 
-  function inspectSignal(index) {
-    if (!current || !current.signals[index]) return;
-    var signal = current.signals[index];
-    var tone = signalColors()[signal.tone] || css("--viz-series-1", "#2563eb");
-    setInspector(signal.icon, signal.title + " · " + signal.timing, signal.copy, tone, []);
+  function inspectDose(doseIndex) {
+    var dose = doses[doseIndex];
+    if (!dose || !current) return;
+    selectedDose = selectedDose === doseIndex ? -1 : doseIndex;
+    chart.setOption(buildOption(), true);
+    var portion = dose.mg >= 175 ? "Full tablet" : "Half tablet";
+    setInspector("pill", minuteToTime(timeToMinute(dose.time)) + " · " + dose.mg + " mg", portion + " · its individual contribution is " + (selectedDose === doseIndex ? "highlighted." : "shown as a faint line."), current.colors.primary);
+  }
+
+  function inspectInterval(index) {
+    if (!current || !current.insights.intervals[index]) return;
+    var interval = current.insights.intervals[index];
+    var timing = minuteToTime(interval.start) + " → " + minuteToTime(interval.end);
+    var copy = timing;
+    var tone = current.colors.muted;
+    if (interval.close) {
+      copy += " · closer spacing creates more overlap.";
+      tone = current.colors.change;
+    } else if (interval.long) {
+      copy += " · wider spacing leaves more room for the curve to fall.";
+      tone = current.colors.off;
+    } else {
+      copy += " · the brace shows the no-dose interval.";
+    }
+    setInspector("hourglass", durationCompact(interval.duration) + " between doses", copy, tone);
+  }
+
+  function inspectOff(index) {
+    if (!current || !current.insights.offSegments[index]) return;
+    var segment = current.insights.offSegments[index];
+    var morning = segment.start < timeToMinute(doses[0].time) ? "Morning OFF" : "Overnight OFF";
+    var timing = minuteToTime(segment.start) + " → " + minuteToTime(segment.end);
+    setInspector("moon", morning + " · " + durationCompact(segment.end - segment.start), timing + " · the red curve sits in the low/OFF region.", current.colors.off);
   }
 
   chart.on("click", function (params) {
-    if (params.seriesName === "Schedule signals") {
-      inspectSignal(params.value[2]);
+    if (!current) return;
+    if (params.seriesName === "Reference points") {
+      inspectPoint(Number(params.value[2]));
       return;
     }
-    if (params.seriesName === "Doses") {
-      inspectTime(params.value[0]);
+    if (params.seriesName === "Dose pills") {
+      inspectDose(Number(params.value[2]));
       return;
     }
-    if (params.value && Array.isArray(params.value)) inspectTime(params.value[0]);
+    if (params.seriesName === "Dose spacing") {
+      inspectInterval(Number(params.value[3]));
+      return;
+    }
+    if (params.seriesName === "OFF periods") {
+      inspectOff(Number(params.value[2]));
+      return;
+    }
+    if (params.value && Array.isArray(params.value) && Number.isFinite(Number(params.value[0]))) {
+      describeTime(Number(params.value[0]));
+    }
   });
 
   chart.getZr().on("click", function (event) {
-    if (event.target) return;
+    if (event.target || !current) return;
     var point = [event.offsetX, event.offsetY];
     if (!chart.containPixel({ gridIndex: 0 }, point)) return;
     var converted = chart.convertFromPixel({ xAxisIndex: 0 }, point);
-    inspectTime(converted[0]);
+    describeTime(Number(converted[0]));
   });
 
   function renderDoseEditor() {
-    var list = document.getElementById("lsm-dose-list");
+    var list = document.getElementById("ldm-dose-list");
     list.innerHTML = "";
     doses.forEach(function (dose, index) {
       var row = document.createElement("div");
-      row.className = "lsm-dose-row";
+      row.className = "ldm-dose-row";
       row.innerHTML = "<label><span>Time</span><input class=\"form-control\" type=\"time\" value=\"" + dose.time + "\" data-time=\"" + index + "\"></label>" +
         "<label><span>Levodopa mg</span><input class=\"form-control\" type=\"number\" min=\"25\" max=\"400\" step=\"25\" value=\"" + dose.mg + "\" data-mg=\"" + index + "\"></label>";
       list.appendChild(row);
     });
-    document.getElementById("lsm-schedule-summary").textContent = "Schedule · " + doses.length + " doses";
+    document.getElementById("ldm-schedule-summary").textContent = "Edit doses · " + doses.map(function (dose) { return dose.time; }).join(", ");
     list.querySelectorAll("input").forEach(function (input) {
       input.addEventListener("change", function () {
         var timeIndex = input.getAttribute("data-time");
         var mgIndex = input.getAttribute("data-mg");
         if (timeIndex !== null && input.value) doses[Number(timeIndex)].time = input.value;
         if (mgIndex !== null) doses[Number(mgIndex)].mg = clamp(Number(input.value) || 25, 25, 400);
-        try { localStorage.setItem("levodopa-schedule-map-doses-v2", JSON.stringify(doses)); } catch (_) {}
+        doses.sort(function (a, b) { return timeToMinute(a.time) - timeToMinute(b.time); });
+        try { localStorage.setItem("levodopa-day-map-doses-v3", JSON.stringify(doses)); } catch (_) {}
+        selectedDose = -1;
+        renderDoseEditor();
         update();
       });
     });
@@ -1772,7 +1995,7 @@ svg {
     var value = doses.map(function (dose) { return dose.time.replace(":", "") + "-" + dose.mg; }).join(",");
     var url = new URL(window.location.href);
     url.searchParams.set("s", value);
-    var status = document.getElementById("lsm-share-status");
+    var status = document.getElementById("ldm-share-status");
     if (navigator.share) {
       navigator.share({ title: "Levodopa schedule", url: url.toString() }).then(function () {
         status.textContent = "Shared";
@@ -1782,14 +2005,14 @@ svg {
     navigator.clipboard.writeText(url.toString()).then(function () {
       status.textContent = "Link copied";
     }).catch(function () {
-      status.textContent = "Copy the URL from the address bar";
+      status.textContent = "Copy the address-bar link";
     });
   }
 
   function update() {
     chart.setOption(buildOption(), true);
-    var crestIndex = current.signals.findIndex(function (signal) { return signal.tone === "crest"; });
-    inspectSignal(crestIndex >= 0 ? crestIndex : 0);
+    var highIndex = current.insights.points.findIndex(function (point) { return point.kind === "high"; });
+    inspectPoint(highIndex >= 0 ? highIndex : 0);
   }
 
   var resizeFrame = null;
@@ -1802,7 +2025,7 @@ svg {
     });
   });
 
-  document.getElementById("lsm-share").addEventListener("click", shareSchedule);
+  document.getElementById("ldm-share").addEventListener("click", shareSchedule);
   resizeObserver.observe(root);
   renderDoseEditor();
   update();

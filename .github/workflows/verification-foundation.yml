@@ -1,8 +1,6 @@
 name: Verification foundation
 
 on:
-  push:
-    branches: [agent/phase-1-verification-foundation]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -11,8 +9,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: verification-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: verification-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
 
 jobs:
   webkit-verification:

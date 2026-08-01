@@ -28,6 +28,6 @@ export function RightNow({ schedule, model, periods, nowMinute, onOverview }: { 
   return <section className="right-now" aria-labelledby="right-now-heading" data-testid="right-now">
     <div className="right-now__label">Right now</div>
     <div className="right-now__main"><div><h2 id="right-now-heading">{copy.label}</h2><p>{currentExplanation(period.kind, schedule, nowMinute)}</p></div><div className="right-now__glyph"><ForecastGlyph kind={period.kind} size={54}/></div></div>
-    <DayShapeOverview model={model} periods={periods} nowMinute={nowMinute} onOpen={onOverview}/>
+    <DayShapeOverview schedule={schedule} model={model} periods={periods} nowMinute={nowMinute} onOpen={onOverview}/>
   </section>;
 }

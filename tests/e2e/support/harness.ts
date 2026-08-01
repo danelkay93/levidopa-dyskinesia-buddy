@@ -127,7 +127,9 @@ export async function installHarness(page: Page, schedule?: DoseFixture[]): Prom
 }
 
 export async function openApp(page: Page, query = ''): Promise<void> {
-  await page.goto(`/${query}`, { waitUntil: 'networkidle' });
+  // The application initializes before late optional CDN helpers. Waiting for
+  // networkidle made the verification suite depend on those unrelated requests.
+  await page.goto(`/${query}`, { waitUntil: 'commit' });
   await page.waitForFunction(() => {
     return Boolean(
       document.querySelector('#levodopa-day-map') &&

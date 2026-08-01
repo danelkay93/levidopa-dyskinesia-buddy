@@ -3,9 +3,68 @@
   color: var(--text-primary);
 }
 
+.sheet-overlay {
+  background: rgb(16 47 54 / .24);
+}
+
+.sheet-motion {
+  background: var(--surface);
+  backdrop-filter: none;
+}
+
+.sheet-modal {
+  overscroll-behavior: contain;
+}
+
+body {
+  font-size: 1.0625rem;
+}
+
+.app-header h1 {
+  font-size: 1.75rem;
+}
+
 .app-header > .button {
   min-height: 52px;
   height: 52px;
+}
+
+.right-now__label,
+.dose-station__eyebrow,
+.journey-label {
+  font-size: .8125rem;
+}
+
+.right-now h2 {
+  font-size: 1.875rem;
+}
+
+.right-now p {
+  font-size: 1.0625rem;
+}
+
+.dose-station__time {
+  font-size: 1.375rem;
+}
+
+.dose-station--next .dose-station__time {
+  font-size: 1.875rem;
+}
+
+.dose-station__amount {
+  font-size: 1rem;
+}
+
+.dose-station__until {
+  font-size: .9375rem;
+}
+
+.dose-station__forecast {
+  font-size: .8125rem;
+}
+
+.primary-nav__item {
+  font-size: .75rem;
 }
 
 .primary-nav__item span {
@@ -14,6 +73,12 @@
 
 .analyze-tabs [role="tab"] {
   min-height: 52px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  line-height: 1.1;
 }
 
 .journey {
@@ -27,7 +92,7 @@
 .dose-station--next {
   display: block;
   min-height: 158px;
-  padding: 16px 44px 16px 18px;
+  padding: 16px 44px 42px 18px;
 }
 
 .dose-station--next .dose-station__copy {
@@ -35,10 +100,11 @@
 }
 
 .dose-station--next .dose-station__amount {
-  white-space: nowrap;
+  white-space: normal;
 }
 
-.dose-station--next .dose-station__visual {
+.dose-station--next .dose-station__visual,
+.dose-station:not(.dose-station--next) .dose-station__visual {
   display: contents;
 }
 
@@ -51,12 +117,80 @@
 .dose-station--next .dose-station__forecast {
   position: absolute;
   right: 48px;
-  bottom: 17px;
+  bottom: 12px;
   max-width: calc(100% - 72px);
+}
+
+.dose-station:not(.dose-station--next) {
+  display: block;
+  min-height: 104px;
+  padding: 14px 44px 38px 18px;
+}
+
+.dose-station:not(.dose-station--next) .dose-station__copy {
+  padding-right: 68px;
+}
+
+.dose-station:not(.dose-station--next) .dose-station__amount {
+  white-space: normal;
+}
+
+.dose-station:not(.dose-station--next) .tablet-illustration {
+  position: absolute;
+  top: 12px;
+  right: 47px;
+  width: 46px;
+}
+
+.dose-station:not(.dose-station--next) .dose-station__forecast {
+  position: absolute;
+  right: 42px;
+  bottom: 8px;
+  max-width: calc(100% - 76px);
 }
 
 .view--analyze > .view-heading {
   margin-top: 0;
+}
+
+.dose-editor input[type="time"]::-webkit-datetime-edit-second-field {
+  display: none;
+}
+
+.editor-alert,
+.dose-editor__error {
+  color: var(--period-low);
+  font-weight: 650;
+}
+
+.editor-alert {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--period-low);
+  border-radius: 16px;
+  background: var(--period-low-soft);
+}
+
+.dose-editor__error {
+  margin: -8px 0 0;
+  font-size: .875rem;
+}
+
+.dose-editor input[aria-invalid="true"] {
+  border: 2px solid var(--period-low);
+}
+
+.undo-removal {
+  margin-top: 14px;
+  min-height: 56px;
+  padding: 4px 6px 4px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  background: var(--surface-subtle);
 }
 
 @media (min-width: 768px) {
@@ -137,11 +271,11 @@
   }
 
   .right-now h2 {
-    font-size: 27px;
+    font-size: 1.6875rem;
   }
 
   .right-now p {
-    font-size: 16px;
+    font-size: 1rem;
   }
 
   .day-overview,
@@ -156,7 +290,7 @@
 
   .dose-station--next {
     min-height: 156px;
-    padding: 14px 40px 38px 16px;
+    padding: 14px 40px 40px 16px;
   }
 
   .dose-station--next .dose-station__copy {
@@ -165,18 +299,18 @@
 
   .dose-station--next .dose-station__time {
     margin-top: 2px;
-    font-size: 28px;
+    font-size: 1.75rem;
     line-height: 1.05;
   }
 
   .dose-station--next .dose-station__amount {
-    font-size: 16px;
+    font-size: 1rem;
     line-height: 1.25;
   }
 
   .dose-station--next .dose-station__until {
     margin-top: 2px;
-    font-size: 14px;
+    font-size: .875rem;
     line-height: 1.2;
   }
 
@@ -205,5 +339,10 @@
   .dose-station--next .dose-station__forecast span {
     max-width: 160px;
     text-align: right;
+  }
+
+  .dose-station:not(.dose-station--next) {
+    min-height: 112px;
+    padding-left: 16px;
   }
 }

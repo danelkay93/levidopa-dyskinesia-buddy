@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import fs from 'node:fs/promises';
+import { waitForFeatureView } from './support';
 
 const states = [
   ['default', '/?now=09:30'],
@@ -16,7 +17,7 @@ for (const [name, path] of states) {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(path);
     await page.getByTestId('app-shell').waitFor();
-    await page.waitForTimeout(200);
+    await waitForFeatureView(page);
 
     const result = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])

@@ -3,6 +3,19 @@
   color: var(--text-primary);
 }
 
+.app-header > .button {
+  min-height: 52px;
+  height: 52px;
+}
+
+.primary-nav__item span {
+  white-space: nowrap;
+}
+
+.analyze-tabs [role="tab"] {
+  min-height: 52px;
+}
+
 .journey {
   margin-top: 20px;
 }
@@ -46,19 +59,33 @@
   margin-top: 0;
 }
 
+@media (min-width: 768px) {
+  .app-layout:not(:has(.context-panel)) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .app-layout:not(:has(.context-panel)) .view--schedule {
+    grid-column: 1 / -1;
+  }
+}
+
 @media (min-width: 768px) and (max-width: 999px) and (min-height: 521px) {
   .app-shell {
     padding-left: 96px;
     padding-right: 12px;
   }
 
-  .app-layout {
+  .app-layout:has(.context-panel) {
     grid-template-columns: minmax(0, 1fr) 225px;
     gap: 14px;
   }
 
   .view {
     max-width: 421px;
+  }
+
+  .app-layout:not(:has(.context-panel)) .view {
+    max-width: 520px;
   }
 
   .context-panel {
@@ -96,10 +123,6 @@
 
   .view {
     max-width: 640px;
-  }
-
-  .context-panel--empty {
-    display: none;
   }
 }
 

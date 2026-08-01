@@ -68,7 +68,22 @@ export function periodAtMinute(periods: DerivedPeriod[], minute: number): Derive
   return periods.find((period) => normalized >= period.start && normalized <= period.end) ?? periods[0];
 }
 
+function gapToNextDose(dose: Dose, schedule: Schedule): number {
+  const ordered = schedule.doses
+    .map((item) => ({ dose: item, minute: resolveDisplayMinute(item.time) }))
+    .sort((a, b) => a.minute - b.minute);
+  const index = ordered.findIndex((item) => item.dose.id === dose.id);
+  if (index < 0) return 0;
+  const current = ordered[index].minute;
+  const next = index === ordered.length - 1 ? ordered[0].minute + 1440 : ordered[index + 1].minute;
+  return next - current;
+}
+
 export function forecastForDose(dose: Dose, schedule: Schedule, model: ModelResult): PeriodKind {
+  // A long gap after the dose makes the broad journey cue “fading afterward” more useful
+  // than describing a brief early overlap. This is a display heuristic, not a model change.
+  if (gapToNextDose(dose, schedule) >= 480) return 'fading';
+
   const doseMinute = resolveDisplayMinute(dose.time);
   const lookAhead = nearestModelIndex(doseMinute + 120);
   const active = model.occurrences.filter((occurrence) => occurrence.displayCurve[lookAhead] > 0.08).length;

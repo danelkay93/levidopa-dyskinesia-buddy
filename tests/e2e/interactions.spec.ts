@@ -24,7 +24,7 @@ test('duplicate times block saving and removal can be undone', async ({ page }) 
   await page.setViewportSize({ width: 390, height: 844 });
   await openState(page, '/?view=schedule&now=09:30');
 
-  const timeInputs = page.locator('input[type="time"]');
+  const timeInputs = page.getByRole('textbox', { name: 'Dose time in 24-hour format' });
   await timeInputs.nth(1).fill('07:30');
   await expect(page.getByRole('alert')).toContainText('different time');
   await expect(page.getByRole('button', { name: 'Done' })).toBeDisabled();

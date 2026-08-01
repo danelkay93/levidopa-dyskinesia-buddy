@@ -14,6 +14,7 @@ export interface InitialUrlState {
 }
 
 const STORAGE_KEY = 'levodopa-day-map-schedule-v1';
+const LEGACY_STORAGE_KEY = 'levodopa-day-map-doses-v3';
 
 function decodeSchedule(value: string): Schedule {
   const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
@@ -22,10 +23,42 @@ function decodeSchedule(value: string): Schedule {
   return ScheduleSchema.parse(JSON.parse(decoded));
 }
 
+function migrateLegacySchedule(value: unknown): Schedule | null {
+  if (!Array.isArray(value) || value.length < 1 || value.length > 12) return null;
+
+  const doses = value.map((entry, index) => {
+    if (!entry || typeof entry !== 'object') return null;
+    const { time, mg } = entry as { time?: unknown; mg?: unknown };
+    if (typeof time !== 'string' || !/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) return null;
+    const amount = Number(mg);
+    if (!Number.isInteger(amount) || amount < 25 || amount > 400) return null;
+
+    return {
+      id: `legacy-${time.replace(':', '')}-${index}`,
+      time,
+      mg: amount,
+      formulation: 'CR' as const,
+      // The old prototype stored only time and amount. Preserve its displayed
+      // convention: 200 mg as a whole tablet and smaller doses as a half.
+      tabletFraction: amount >= 200 ? 1 as const : 0.5 as const,
+    };
+  });
+
+  if (doses.some((dose) => dose === null)) return null;
+  return ScheduleSchema.parse({ version: 1, doses });
+}
+
 function readSavedSchedule(): Schedule | null {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? ScheduleSchema.parse(JSON.parse(saved)) : null;
+    if (saved) return ScheduleSchema.parse(JSON.parse(saved));
+
+    const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+    if (!legacy) return null;
+    const migrated = migrateLegacySchedule(JSON.parse(legacy));
+    if (!migrated) return null;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+    return migrated;
   } catch {
     return null;
   }

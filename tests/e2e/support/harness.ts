@@ -1,7 +1,11 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import type { Page, TestInfo } from '@playwright/test';
 import type { DoseFixture } from '../fixtures/schedules';
+
+const require = createRequire(import.meta.url);
+const echartsBundlePath = require.resolve('echarts/dist/echarts.min.js');
 
 const defaultDoseDeclaration = `  var doses = [
     { time: "07:30", mg: 200 },
@@ -21,7 +25,8 @@ const instrumentedDoseDeclaration = `  var doses = Array.isArray(window.__LDM_TE
         { time: "19:00", mg: 100 }
       ];`;
 
-const echartsTag = '<script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>';
+const echartsUrl = 'https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js';
+const echartsTag = `<script src="${echartsUrl}"></script>`;
 const instrumentation = `${echartsTag}
 <script data-ldm-test-harness>
 (function () {
@@ -86,6 +91,15 @@ export async function installHarness(page: Page, schedule?: DoseFixture[]): Prom
       },
     });
   }, { fixture: schedule ?? null });
+
+  await page.route(echartsUrl, async (route) => {
+    const body = await readFile(echartsBundlePath, 'utf8');
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/javascript; charset=utf-8',
+      body,
+    });
+  });
 
   await page.route('http://127.0.0.1:4173/**', async (route) => {
     if (route.request().resourceType() !== 'document') {
@@ -158,11 +172,16 @@ export async function captureMetrics(page: Page, name: string, testInfo: TestInf
       return {
         tag: element.tagName.toLowerCase(),
         id: element.id || null,
+        role: element.getAttribute('role'),
         label: element.getAttribute('aria-label') || element.textContent?.trim().slice(0, 80) || null,
         width: Math.round(rect.width * 10) / 10,
         height: Math.round(rect.height * 10) / 10,
       };
     });
+
+    const landmarks = Array.from(
+      document.querySelectorAll('main, nav, header, footer, aside, [role="main"], [role="navigation"]'),
+    ).map((element) => ({ tag: element.tagName.toLowerCase(), role: element.getAttribute('role') }));
 
     return {
       title: document.title,
@@ -175,6 +194,16 @@ export async function captureMetrics(page: Page, name: string, testInfo: TestInf
         clientHeight: document.documentElement.clientHeight,
         scrollHeight: document.documentElement.scrollHeight,
         horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+      },
+      semanticStructure: {
+        headings: Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6')).map((heading) => ({
+          level: heading.tagName.toLowerCase(),
+          text: heading.textContent?.trim() ?? '',
+        })),
+        landmarks,
+        canvasCount: document.querySelectorAll('canvas').length,
+        roleImageCount: document.querySelectorAll('[role="img"]').length,
+        chartFocusableDescendants: document.querySelectorAll('#ldm-chart [tabindex], #ldm-chart button, #ldm-chart a').length,
       },
       interactive,
       targetsBelow44: interactive.filter((target) => target.width < 44 || target.height < 44),

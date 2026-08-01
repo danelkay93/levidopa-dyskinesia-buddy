@@ -1,0 +1,17 @@
+{
+  "name": "levodopa-day-map-verification",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "serve": "http-server . -p 4173 -a 127.0.0.1 -c-1",
+    "test:e2e": "playwright test",
+    "test:a11y": "playwright test tests/e2e/accessibility.spec.ts",
+    "test:visual": "VISUAL_COMPARE=1 playwright test tests/e2e/visual-comparison.spec.ts"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.54.1",
+    "http-server": "^14.1.1",
+    "typescript": "^5.8.3"
+  }
+}

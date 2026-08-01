@@ -20,6 +20,24 @@ test('edit schedule with large stepper', async ({ page }) => {
   await expect(page.getByTestId('right-now')).toBeVisible();
 });
 
+test('duplicate times block saving and removal can be undone', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openState(page, '/?view=schedule&now=09:30');
+
+  const timeInputs = page.locator('input[type="time"]');
+  await timeInputs.nth(1).fill('07:30');
+  await expect(page.getByRole('alert')).toContainText('different time');
+  await expect(page.getByRole('button', { name: 'Done' })).toBeDisabled();
+
+  await timeInputs.nth(1).fill('11:45');
+  await expect(page.getByRole('button', { name: 'Done' })).toBeEnabled();
+
+  await page.getByRole('button', { name: 'Remove dose at 19:00' }).click();
+  await expect(page.getByRole('status')).toContainText('Dose at 19:00 removed');
+  await page.getByRole('button', { name: 'Undo' }).click();
+  await expect(page.getByRole('button', { name: 'Remove dose at 19:00' })).toBeVisible();
+});
+
 test('malformed shared URL explains recovery', async ({ page }) => {
   await openState(page, '/?s=bad');
   await expect(page.getByRole('alert')).toContainText('could not be read');

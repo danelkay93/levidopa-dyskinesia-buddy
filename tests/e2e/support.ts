@@ -11,7 +11,13 @@ export const viewports = [
   { id: 'tablet-1024', width: 1024, height: 1366 },
 ];
 
+export async function waitForFeatureView(page: Page): Promise<void> {
+  await page.locator('#main-content:not([aria-busy="true"])').waitFor({ state: 'visible' });
+  await expect(page.getByText('Loading view…')).toHaveCount(0);
+}
+
 export async function capture(page: Page, name: string) {
+  await waitForFeatureView(page);
   await fs.mkdir('artifacts/screenshots', { recursive: true });
   await fs.mkdir('artifacts/viewport-screenshots', { recursive: true });
   await page.screenshot({ path: `artifacts/viewport-screenshots/${name}.png`, fullPage: false });
@@ -41,5 +47,6 @@ export async function openState(page: Page, path: string) {
   await page.goto(path);
   await expect(page).toHaveTitle('Levodopa Day Map');
   await expect(page.getByTestId('app-shell')).toBeVisible();
+  await waitForFeatureView(page);
   return errors;
 }

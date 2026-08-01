@@ -1,9 +1,40 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DownloadSimpleIcon, LinkSimpleIcon, MinusIcon, PlusIcon, TrashIcon } from '@phosphor-icons/react';
 import type { Dose, Schedule } from '@/domain/schedule';
 import { normalizeSchedule } from '@/domain/schedule';
 import { Button } from '@/components/ui/Button';
 import { TabletIllustration } from '@/components/icons/TabletIllustration';
+
+const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+function TimeTextInput({ value, duplicate, errorId, onCommit }: { value: string; duplicate: boolean; errorId: string; onCommit: (time: string) => void }) {
+  const [text, setText] = useState(value);
+  const validFormat = TIME_PATTERN.test(text);
+
+  useEffect(() => setText(value), [value]);
+
+  return <input
+    type="text"
+    inputMode="numeric"
+    enterKeyHint="done"
+    autoComplete="off"
+    spellCheck={false}
+    maxLength={5}
+    placeholder="HH:MM"
+    value={text}
+    aria-label="Dose time in 24-hour format"
+    aria-invalid={duplicate || !validFormat || undefined}
+    aria-describedby={duplicate || !validFormat ? errorId : undefined}
+    onChange={(event) => {
+      const next = event.target.value.replace(/[^0-9:]/g, '').slice(0, 5);
+      setText(next);
+      if (TIME_PATTERN.test(next)) onCommit(next);
+    }}
+    onBlur={() => {
+      if (!TIME_PATTERN.test(text)) setText(value);
+    }}
+  />;
+}
 
 export function ScheduleView({ schedule, onChange, onShare }: { schedule: Schedule; onChange: (schedule: Schedule) => void; onShare: () => void }) {
   const [draft, setDraft] = useState(schedule);
@@ -64,17 +95,9 @@ export function ScheduleView({ schedule, onChange, onShare }: { schedule: Schedu
           <legend className="sr-only">Dose at {dose.time}</legend>
           <label>
             <span>Time</span>
-            <input
-              type="time"
-              lang="en-GB"
-              step={60}
-              value={dose.time}
-              aria-invalid={duplicate || undefined}
-              aria-describedby={duplicate ? errorId : undefined}
-              onChange={(event) => updateDose(dose.id, { time: event.target.value })}
-            />
+            <TimeTextInput value={dose.time} duplicate={duplicate} errorId={errorId} onCommit={(time) => updateDose(dose.id, { time })}/>
           </label>
-          {duplicate ? <p className="dose-editor__error" id={errorId}>Another dose already uses this time.</p> : null}
+          {duplicate ? <p className="dose-editor__error" id={errorId}>Another dose already uses this time.</p> : <p className="sr-only" id={errorId}>Enter a valid time from 00:00 to 23:59.</p>}
 
           <label>
             <span>Levodopa</span>

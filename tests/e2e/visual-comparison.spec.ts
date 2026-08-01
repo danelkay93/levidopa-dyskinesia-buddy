@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForFeatureView } from './support';
 
 test.skip(!process.env.VISUAL_COMPARE, 'Set VISUAL_COMPARE=1 to enable approved-baseline comparison');
 const cases = [
@@ -13,6 +14,7 @@ for (const [name, path, viewport] of cases) {
     await page.setViewportSize(viewport);
     await page.goto(path);
     await page.getByTestId('app-shell').waitFor();
+    await waitForFeatureView(page);
     await expect(page).toHaveScreenshot(`${name}.png`, { fullPage: true });
   });
 }

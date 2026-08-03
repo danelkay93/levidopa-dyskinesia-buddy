@@ -43,7 +43,7 @@ function fileUrlToLocalPath(url) {
 // filter. Every advisory finding carries the flag (stamped by the registry via
 // findings.mjs).
 function isAdvisory(finding) {
-  return finding && finding.advisory === true;
+  return Boolean(finding && (finding.advisory === true || finding.severity === 'advisory'));
 }
 
 function partitionAdvisory(findings) {

@@ -7481,14 +7481,19 @@ if (IS_BROWSER) {
       isHidden: isElementHidden(el),
       findings: findings.map(f => {
         const ap = ANTIPATTERNS.find(a => a.id === (f.type || f.id));
+        const severity = f.severity || ap?.severity || 'warning';
         return {
           type: f.type || f.id,
           category: ap ? ap.category : 'quality',
-          severity: f.severity || ap?.severity || 'warning',
+          severity,
           // Advisory findings (em-dash overuse, etc.) are surfaced but never
           // treated as failures; carry the flag so the overlay/extension can
           // render them with the mildest affordance and consumers can filter.
-          advisory: (ap && ap.advisory === true) || f.advisory === true,
+          // A finding-level severity override intentionally wins over a
+          // registry-only advisory flag (for example a hero-region promotion).
+          advisory: f.advisory === true
+            || severity === 'advisory'
+            || (ap?.advisory === true && f.severity == null),
           detail: f.detail || f.snippet,
           ignoreValue: f.ignoreValue || f.value || '',
           name: ap ? ap.name : (f.type || f.id),

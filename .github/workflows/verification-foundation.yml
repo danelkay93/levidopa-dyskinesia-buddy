@@ -29,6 +29,9 @@ jobs:
       - name: Install WebKit
         run: npx playwright install --with-deps webkit
 
+      - name: Impeccable runtime regression tests
+        run: node --test .agents/skills/impeccable/tests/*.test.mjs
+
       - name: Unit and component tests
         run: npm test
         env:

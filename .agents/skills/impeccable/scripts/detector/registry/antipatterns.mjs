@@ -570,9 +570,12 @@ function getAntipattern(id) {
 // Advisory rules are detected and reported, but never treated as failures:
 // the CLI lists them under a separate "Advisory" section, they do not affect
 // exit codes or the failure count, and the design hook skips them by default.
-// The set is derived from the registry so a rule only needs `advisory: true`.
+// The set is derived from the registry so either supported declaration form —
+// `advisory: true` or `severity: 'advisory'` — is sufficient.
 const ADVISORY_RULE_IDS = new Set(
-  ANTIPATTERNS.filter(rule => rule.advisory === true).map(rule => rule.id),
+  ANTIPATTERNS
+    .filter(rule => rule.advisory === true || rule.severity === 'advisory')
+    .map(rule => rule.id),
 );
 
 function isAdvisoryRule(id) {

@@ -1,0 +1,16 @@
+minimum_pre_commit_version: '3.0.0'
+exclude: ^\.agents/skills/impeccable/
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+        args: [--maxkb=2000]
+      - id: check-case-conflict
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-yaml
+      - id: mixed-line-ending
+        args: [--fix=no]

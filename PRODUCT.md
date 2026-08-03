@@ -39,13 +39,14 @@ The application is phone-first and also supports phone landscape and tablet layo
 
 ## Brand Commitments
 
-The governing direction is **Forecast Journey**: calm clinical modernism with human warmth, plain language before technical terminology, progressive disclosure, and restrained depth. Fashionable effects must never obscure medication values, medically meaningful color, warnings, labels, or interaction affordances.
+The governing product character is calm clinical modernism with human warmth, plain language before technical terminology, progressive disclosure, and restrained depth. A vertical day journey, forecast-like summary, and separate analytical instrument remain product hypotheses from the governing brief; their current visual implementation is not approved design authority. Fashionable effects must never obscure medication values, medically meaningful color, warnings, labels, or interaction affordances.
 
 ## Evidence on Hand
 
-- `design-qa.md` records visual, interaction, accessibility, model, and release-check findings for the approved implementation.
+- `design-qa.md` is a historical self-review of the incumbent implementation. Its automated and behavioral evidence remains useful, but its visual-approval conclusion has been revoked.
 - `docs/implementation-notes.md` records architecture, model status, state boundaries, deployment, and browser-verification limits.
-- `docs/visual-difference-report.md` records differences from the approved design package.
+- `docs/visual-difference-report.md` records the implementation's claims about earlier exploratory vectors; neither the vectors nor the implementation were approved as the final visual direction.
+- `docs/design-recovery/status.md` is the current authority for design phase, approval state, and protected engineering boundaries.
 - The repository's fixtures and automated tests are the public evidence for deterministic behavior; future work must not fabricate clinical validation, patient outcomes, or testimonials.
 
 ## Product Principles
@@ -59,4 +60,3 @@ The governing direction is **Forecast Journey**: calm clinical modernism with hu
 ## Accessibility & Inclusion
 
 Important actions target approximately 52–56 CSS pixels and avoid precision dragging as the only interaction. The product must support keyboard and screen-reader use, enlarged text and reflow, orientation changes, reduced motion, increased contrast, reduced transparency, safe areas, dynamic viewport changes, and non-color cues. Hover-only information and color-only meaning are prohibited.
-

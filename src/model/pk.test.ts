@@ -1,5 +1,5 @@
 import { DEFAULT_SCHEDULE } from '@/domain/schedule';
-import { buildModel, practicalLevel, PRACTICAL_ZERO, REFERENCE_PEAK } from './pk';
+import { buildModel, occurrencesInDisplayWindow, practicalLevel, PRACTICAL_ZERO, REFERENCE_PEAK } from './pk';
 
 describe('deterministic PK/effect-site model', () => {
   it('keeps the validated practical-zero transform', () => {
@@ -16,5 +16,15 @@ describe('deterministic PK/effect-site model', () => {
       const sum = a.occurrences.reduce((total, occurrence) => total + occurrence.displayCurve[index], 0);
       expect(sum).toBeCloseTo(a.total[index], 8);
     }
+  });
+  it('uses the next-day occurrence for doses before the 06:00 display boundary', () => {
+    const model = buildModel({
+      version: 1,
+      doses: [{ id: 'dose-0530', time: '05:30', mg: 100, formulation: 'CR', tabletFraction: 0.5 }],
+    });
+    const displayed = occurrencesInDisplayWindow(model);
+
+    expect(displayed).toHaveLength(1);
+    expect(displayed[0]).toMatchObject({ doseId: 'dose-0530', dayOffset: 1, time: 1770 });
   });
 });

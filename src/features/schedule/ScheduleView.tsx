@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { DownloadSimpleIcon, LinkSimpleIcon, MinusIcon, PlusIcon, TrashIcon } from '@phosphor-icons/react';
 import type { Dose, Schedule } from '@/domain/schedule';
-import { normalizeSchedule } from '@/domain/schedule';
+import { MAX_SCHEDULE_DOSES, normalizeSchedule, ScheduleSchema } from '@/domain/schedule';
 import { Button } from '@/components/ui/Button';
 import { TabletIllustration } from '@/components/icons/TabletIllustration';
+import { downloadSchedule } from '@/features/share/download-schedule';
 
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 
@@ -36,9 +37,10 @@ function TimeTextInput({ value, duplicate, errorId, onCommit }: { value: string;
   />;
 }
 
-export function ScheduleView({ schedule, onChange, onShare }: { schedule: Schedule; onChange: (schedule: Schedule) => void; onShare: () => void }) {
+export function ScheduleView({ schedule, onChange, onShare }: { schedule: Schedule; onChange: (schedule: Schedule) => void; onShare: (schedule: Schedule) => void }) {
   const [draft, setDraft] = useState(schedule);
   const [removedDose, setRemovedDose] = useState<Dose | null>(null);
+  const [validationError, setValidationError] = useState('');
 
   const duplicateTimes = useMemo(() => {
     const counts = new Map<string, number>();
@@ -54,10 +56,18 @@ export function ScheduleView({ schedule, onChange, onShare }: { schedule: Schedu
   };
 
   const save = () => {
-    if (duplicateTimes.size === 0) onChange(normalizeSchedule(draft));
+    if (duplicateTimes.size > 0) return;
+    const parsed = ScheduleSchema.safeParse(normalizeSchedule(draft));
+    if (!parsed.success) {
+      setValidationError('This schedule could not be saved. Review the dose details and try again.');
+      return;
+    }
+    setValidationError('');
+    onChange(parsed.data);
   };
 
   const add = () => {
+    if (draft.doses.length >= MAX_SCHEDULE_DOSES) return;
     setDraft((current) => ({
       ...current,
       doses: [
@@ -86,6 +96,7 @@ export function ScheduleView({ schedule, onChange, onShare }: { schedule: Schedu
     </header>
 
     {duplicateTimes.size > 0 ? <p className="editor-alert" role="alert">Choose a different time for each dose before saving.</p> : null}
+    {validationError ? <p className="editor-alert" role="alert">{validationError}</p> : null}
 
     <div className="editor-list">
       {draft.doses.map((dose) => {
@@ -120,8 +131,9 @@ export function ScheduleView({ schedule, onChange, onShare }: { schedule: Schedu
 
     {removedDose ? <div className="undo-removal"><span role="status">Dose at {removedDose.time} removed.</span><Button variant="quiet" onPress={undoRemove}>Undo</Button></div> : null}
 
-    <Button className="add-dose" onPress={add}><PlusIcon/>Add another dose</Button>
-    <section className="share-entry"><div><h2>Share or export schedule</h2><p>Review exactly what the link contains.</p></div><Button variant="quiet" onPress={onShare}><LinkSimpleIcon/>Open</Button></section>
-    <Button variant="secondary" className="export-button" onPress={() => { const blob = new Blob([JSON.stringify(draft, null, 2)], { type: 'application/json' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'levodopa-day-map-schedule.json'; link.click(); URL.revokeObjectURL(link.href); }}><DownloadSimpleIcon/>Export schedule file</Button>
+    <Button className="add-dose" onPress={add} isDisabled={draft.doses.length >= MAX_SCHEDULE_DOSES}><PlusIcon/>Add another dose</Button>
+    {draft.doses.length >= MAX_SCHEDULE_DOSES ? <p className="dose-limit" role="status">Maximum of {MAX_SCHEDULE_DOSES} doses reached.</p> : null}
+    <section className="share-entry"><div><h2>Share or export schedule</h2><p>Review exactly what the link contains.</p></div><Button variant="quiet" onPress={() => onShare(normalizeSchedule(draft))}><LinkSimpleIcon/>Open</Button></section>
+    <Button variant="secondary" className="export-button" onPress={() => downloadSchedule(normalizeSchedule(draft))}><DownloadSimpleIcon/>Export schedule file</Button>
   </main>;
 }

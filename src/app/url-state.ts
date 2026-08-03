@@ -68,6 +68,10 @@ export function encodeSchedule(schedule: Schedule): string {
   return window.btoa(JSON.stringify(schedule)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
+export function encodeDoseState(doseId: string): string {
+  return doseId.startsWith('dose-') ? doseId : `dose-${doseId}`;
+}
+
 export function readInitialUrlState(): InitialUrlState {
   const params = new URLSearchParams(window.location.search);
   const requestedView = params.get('view');

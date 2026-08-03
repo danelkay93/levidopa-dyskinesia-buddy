@@ -137,6 +137,12 @@ export function buildModel(schedule: Schedule): ModelResult {
   return { times: MODEL_TIMES, rawTotal, total, occurrences, referencePeak: REFERENCE_PEAK };
 }
 
+export function occurrencesInDisplayWindow(model: ModelResult): DoseOccurrence[] {
+  const start = model.times[0];
+  const end = model.times.at(-1)!;
+  return model.occurrences.filter((occurrence) => occurrence.time >= start && occurrence.time < end);
+}
+
 export function nearestModelIndex(minute: number): number {
   const normalized = minute < DISPLAY_START ? minute + DAY : minute;
   return Math.max(0, Math.min(MODEL_TIMES.length - 1, Math.round((normalized - DISPLAY_START) / STEP_MINUTES)));

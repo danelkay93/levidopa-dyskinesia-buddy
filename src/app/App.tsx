@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { WarningCircleIcon } from '@phosphor-icons/react';
 import type { AppView } from './url-state';
-import { readInitialUrlState, updateUrl } from './url-state';
+import { encodeDoseState, readInitialUrlState, updateUrl } from './url-state';
 import type { Schedule } from '@/domain/schedule';
 import { buildModel } from '@/model/pk';
 import { derivePeriods, forecastForDose } from '@/interpretation/periods';
@@ -32,6 +32,7 @@ export function App() {
   const [selectedPeriod, setSelectedPeriod] = useState<DerivedPeriod | null>(null);
   const [overviewOpen, setOverviewOpen] = useState(initial.openOverview);
   const [shareOpen, setShareOpen] = useState(initial.openShare);
+  const [shareSchedule, setShareSchedule] = useState<Schedule>(initial.schedule);
   const [importError, setImportError] = useState(initial.importError);
 
   const model = useMemo(() => buildModel(schedule), [schedule]);
@@ -63,7 +64,7 @@ export function App() {
     setSelectedPeriod(null);
     setOverviewOpen(false);
     setShareOpen(false);
-    updateUrl({ state: `dose-${id}` });
+    updateUrl({ state: encodeDoseState(id) });
   };
 
   const openAnalyzeDose = (id: string) => {
@@ -72,7 +73,7 @@ export function App() {
     setSelectedPeriod(null);
     setOverviewOpen(false);
     setShareOpen(false);
-    updateUrl({ view: 'analyze', state: `dose-${id}` });
+    updateUrl({ view: 'analyze', state: encodeDoseState(id) });
   };
 
   const openAnalyze = () => {
@@ -83,7 +84,7 @@ export function App() {
 
   const selectAnalyzeDose = (id: string | null) => {
     setSelectedDoseId(id);
-    updateUrl({ state: id ? `dose-${id}` : null });
+    updateUrl({ state: id ? encodeDoseState(id) : null });
   };
 
   const closeContext = () => {
@@ -118,7 +119,7 @@ export function App() {
         {view === 'my-day' ? <MyDayView schedule={schedule} model={model} periods={periods} now={initial.now} onOverview={() => { setOverviewOpen(true); setShareOpen(false); setSelectedDoseId(null); setSelectedPeriod(null); updateUrl({ state: 'overview' }); }} onSelectDose={openDose}/> : null}
         <Suspense fallback={<LoadingView/>}>
           {view === 'analyze' ? <AnalyzeView schedule={schedule} model={model} periods={periods} selectedDoseId={selectedDoseId} onSelectDose={selectAnalyzeDose}/> : null}
-          {view === 'schedule' ? <ScheduleView schedule={schedule} onChange={(next) => { setSchedule(next); try { localStorage.setItem('levodopa-day-map-schedule-v1', JSON.stringify(next)); } catch {} changeView('my-day'); }} onShare={() => { setShareOpen(true); setOverviewOpen(false); setSelectedDoseId(null); setSelectedPeriod(null); updateUrl({ state: 'sharing' }); }}/> : null}
+          {view === 'schedule' ? <ScheduleView schedule={schedule} onChange={(next) => { setSchedule(next); try { localStorage.setItem('levodopa-day-map-schedule-v1', JSON.stringify(next)); } catch {} changeView('my-day'); }} onShare={(draft) => { setShareSchedule(draft); setShareOpen(true); setOverviewOpen(false); setSelectedDoseId(null); setSelectedPeriod(null); updateUrl({ state: 'sharing' }); }}/> : null}
         </Suspense>
       </div>
 
@@ -126,7 +127,7 @@ export function App() {
         {overviewOpen ? <OverviewSheet periods={periods} onSelect={(period) => { setOverviewOpen(false); setSelectedPeriod(period); updateUrl({ state: `period-${period.kind}` }); }}/> : null}
         {selectedDose && selectedDoseKind && view === 'my-day' ? <DoseDetails dose={selectedDose} kind={selectedDoseKind} onAnalyze={() => openAnalyzeDose(selectedDose.id)}/> : null}
         {selectedPeriod && view === 'my-day' ? <PeriodDetails period={selectedPeriod} onAnalyze={openAnalyze}/> : null}
-        {shareOpen ? <ShareDisclosure schedule={schedule}/> : null}
+        {shareOpen ? <ShareDisclosure schedule={shareSchedule}/> : null}
       </ContextSheet>
     </div>
 

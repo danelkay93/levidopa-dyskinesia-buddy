@@ -1,5 +1,5 @@
 import { DEFAULT_SCHEDULE } from '@/domain/schedule';
-import { readInitialUrlState } from './url-state';
+import { encodeDoseState, readInitialUrlState } from './url-state';
 
 describe('initial URL and local schedule state', () => {
   beforeEach(() => {
@@ -39,5 +39,10 @@ describe('initial URL and local schedule state', () => {
     const state = readInitialUrlState();
     expect(state.schedule).toEqual(DEFAULT_SCHEDULE);
     expect(state.importError).toMatch(/left unchanged/i);
+  });
+
+  it('encodes canonical dose states without duplicating the prefix', () => {
+    expect(encodeDoseState('dose-1130')).toBe('dose-1130');
+    expect(encodeDoseState('legacy-0730-0')).toBe('dose-legacy-0730-0');
   });
 });

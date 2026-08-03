@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const TabletFractionSchema = z.union([z.literal(0.5), z.literal(1)]);
+export const MAX_SCHEDULE_DOSES = 12;
 export const DoseSchema = z.object({
   id: z.string().min(1),
   time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
@@ -10,7 +11,7 @@ export const DoseSchema = z.object({
 });
 export const ScheduleSchema = z.object({
   version: z.literal(1),
-  doses: z.array(DoseSchema).min(1).max(12),
+  doses: z.array(DoseSchema).min(1).max(MAX_SCHEDULE_DOSES),
 });
 
 export type Dose = z.infer<typeof DoseSchema>;

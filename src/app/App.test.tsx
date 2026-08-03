@@ -47,4 +47,27 @@ describe('App', () => {
     const decoded = JSON.parse(window.atob(normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=')));
     expect(decoded.doses[0].mg).toBe(225);
   });
+
+  it('orders later doses chronologically across the 06:00 display boundary', async () => {
+    window.history.replaceState({}, '', '/?fixture=midnight&now=10:00');
+    render(<App />);
+
+    const doseStations = await screen.findAllByRole('button', { name: /dose at/i });
+    expect(doseStations.map((station) => station.getAttribute('aria-label'))).toEqual([
+      expect.stringMatching(/Next dose at 11:30/i),
+      expect.stringMatching(/Dose at 17:30/i),
+      expect.stringMatching(/Dose at 23:30/i),
+      expect.stringMatching(/Dose at 05:30/i),
+    ]);
+  });
+
+  it('labels Analyze periods with clock times rather than internal model minutes', async () => {
+    const user = userEvent.setup();
+    window.history.replaceState({}, '', '/?view=analyze&fixture=midnight&now=10:00');
+    render(<App />);
+
+    await user.click(await screen.findByRole('tab', { name: 'Periods' }));
+    expect(await screen.findByText('06:00–07:40')).toBeInTheDocument();
+    expect(screen.queryByText(/modeled minutes/i)).not.toBeInTheDocument();
+  });
 });

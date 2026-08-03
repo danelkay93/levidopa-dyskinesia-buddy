@@ -50,3 +50,15 @@ test('keyboard reaches primary navigation and chart alternatives', async ({ page
   await expect(page.getByRole('button', { name: 'My Day' })).toBeVisible();
   await expect(page.getByRole('button', { name: /07:30/ }).first()).toBeVisible();
 });
+
+test('later doses stay chronological across the 06:00 display boundary', async ({ page }) => {
+  await openState(page, '/?fixture=midnight&now=10:00');
+  await expect(page.locator('.dose-station__time')).toHaveText(['11:30', '17:30', '23:30', '05:30']);
+});
+
+test('Analyze period rows use clock times rather than model minutes', async ({ page }) => {
+  await openState(page, '/?view=analyze&fixture=midnight&now=10:00');
+  await page.getByRole('tab', { name: 'Periods' }).click();
+  await expect(page.getByText('06:00–07:40')).toBeVisible();
+  await expect(page.getByText(/modeled minutes/i)).toHaveCount(0);
+});

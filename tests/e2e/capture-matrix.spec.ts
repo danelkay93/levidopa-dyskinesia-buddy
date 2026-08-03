@@ -19,6 +19,7 @@ const states = [
   ['sharing', '/?view=schedule&now=09:30&state=sharing'],
   ['malformed', '/?s=not-valid&now=09:30'],
   ['midnight', '/?fixture=midnight&now=23:45'],
+  ['midnight-order', '/?fixture=midnight&now=10:00'],
   ['dense', '/?fixture=dense&now=12:00'],
   ['long-low', '/?fixture=one&now=02:30'],
 ] as const;
@@ -36,6 +37,14 @@ test('selected dose tablet layout', async ({ page }) => {
   await page.setViewportSize({ width: 768, height: 1024 });
   const errors = await openState(page, '/?now=09:30&state=dose-1130');
   await capture(page, 'selected-dose-tablet-768');
+  expect(errors).toEqual([]);
+});
+
+test('Analyze period clock labels', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const errors = await openState(page, '/?view=analyze&fixture=midnight&now=10:00');
+  await page.getByRole('tab', { name: 'Periods' }).click();
+  await capture(page, 'analyze-periods');
   expect(errors).toEqual([]);
 });
 

@@ -144,7 +144,11 @@ export const ADVISORY_RULES = new Set([
 
 export function isAdvisoryFinding(finding) {
   const id = finding && normalizeIgnoreRule(finding.antipattern);
-  return Boolean(id && (ADVISORY_RULES.has(id) || finding.advisory === true));
+  return Boolean(id && (
+    ADVISORY_RULES.has(id)
+    || finding.advisory === true
+    || finding.severity === 'advisory'
+  ));
 }
 
 export const DEFAULT_CONFIG = Object.freeze({

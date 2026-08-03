@@ -1,5 +1,7 @@
 # Forecast Journey design QA
 
+> Historical record only. This file captured the implementing agent's self-review and automated results. On 3 August 2026 the user revoked its visual-approval conclusion after reviewing the rendered product. Preserve the technical evidence below, but do not cite `passed` as proof of design quality or approval.
+
 ## Scope
 
 Reviewed the React implementation against the approved Forecast Journey design at 320, 390, and 768 CSS pixels and across selected dose, selected period, Analyze, editing, sharing, malformed import, midnight wrap, dense schedule, long-low schedule, enlarged text, reduced motion, dark mode, forced colors, and phone landscape.
@@ -45,4 +47,4 @@ Also verified duplicate-time validation, remove/undo, malformed-link recovery, l
 
 Playwright WebKit is not a substitute for physical iPhone or BrowserStack verification of Safari chrome, exact safe-area transitions, VoiceOver rotor behavior, Dynamic Type, native share UI, virtual-keyboard behavior, scroll elasticity, and physical motor usability.
 
-passed
+historical-technical-pass; visual-approval-revoked

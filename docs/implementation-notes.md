@@ -21,7 +21,7 @@ Analyze and Schedule are loaded as separate application chunks so the primary My
 
 ## Design authority
 
-The approved Forecast Journey design package remains the visual and interaction authority. The shadcn-style UI primitives use React Aria Components but are restyled entirely through project-owned semantic tokens.
+The React application remains the engineering and behavioral baseline, but its Forecast Journey presentation is not visual-design authority. The user reopened hierarchy, screen structure, and visual direction on 3 August 2026. The shadcn-style UI primitives use React Aria Components and project-owned semantic tokens; both may be restyled or recomposed only after a replacement direction is explicitly approved.
 
 ## Responsive correction
 

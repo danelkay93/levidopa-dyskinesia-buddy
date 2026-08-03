@@ -1,8 +1,10 @@
 # Forecast Journey visual-difference report
 
+> Historical implementation claim, not approval evidence. The referenced vectors and rendered implementation were never explicitly approved as the final visual direction. On 3 August 2026 the user rejected the resulting UI and reopened design exploration.
+
 ## References
 
-The implementation was reviewed against the approved Forecast Journey vectors at 320, 390, and 768 CSS pixels, plus the approved selected-dose, Analyze, editing, and sharing states.
+The implementation was reviewed by its implementing agent against Forecast Journey exploratory vectors at 320, 390, and 768 CSS pixels, plus selected-dose, Analyze, editing, and sharing states.
 
 ## Fidelity ledger
 
@@ -49,4 +51,4 @@ All were corrected before review.
 
 ## Intentional remaining deviations
 
-The implementation does not attempt a literal pixel-for-pixel recreation of the exploratory SVGs. It preserves their approved hierarchy, semantics, palette, geometry, interaction model, and responsive transformations while resolving real browser behavior, 52px target requirements, and text reflow. The current screenshots are review evidence; they should become approved visual baselines only after user approval.
+The implementation does not attempt a literal pixel-for-pixel recreation of the exploratory SVGs. Its implementing agent reported fidelity to their hierarchy, semantics, palette, geometry, interaction model, and responsive transformations while resolving real browser behavior, 52px target requirements, and text reflow. The current screenshots remain historical review evidence and anti-reference material. They must not become golden visual baselines without a new explicit approval decision.

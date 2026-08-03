@@ -1,6 +1,7 @@
 ---
 name: Levodopa Day Map
-description: A calm forecast journey with analytical depth on demand
+description: Incumbent Forecast Journey implementation record; not approved design authority
+status: "reopened-for-design-exploration"
 colors:
   canvas: "#f6f7f4"
   surface: "#ffffff"
@@ -150,11 +151,17 @@ components:
 
 # Design System: Levodopa Day Map
 
+## Status
+
+This file records the visual system currently implemented on `main`. On 3 August 2026 the user explicitly rejected that presentation as design authority and reopened product hierarchy, screen structure, and visual direction for exploration.
+
+Use these tokens and component descriptions to understand what exists, what must remain technically compatible, and what should not be repeated accidentally. Do not treat them as a palette, layout, typography, component, or fidelity target for the next direction. After the user approves a rendered replacement direction, replace this file with the approved visual-system contract and retain this version in repository history.
+
 ## Overview
 
-**Creative North Star: “The Calm Day Guide”**
+**Incumbent candidate: “The Calm Day Guide”**
 
-The visual system is calm clinical modernism with human warmth. It reduces chrome and container noise, but never reduces contrast, label size, affordance, or semantic precision. The dominant phone structure is a vertical forecast journey; analytical density is reserved for Analyze.
+The implementation attempted calm clinical modernism with human warmth, but its rendered hierarchy, density, container treatment, typography, and responsive composition did not meet that intent. The dominant phone structure is a vertical forecast journey; analytical density is reserved for Analyze. Those product relationships may be preserved, restructured, or recomposed during approved exploration.
 
 Depth, translucency, and motion explain hierarchy or state continuity. They are not decorative themes, and medically meaningful content remains on stable, legible surfaces.
 

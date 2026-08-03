@@ -1,0 +1,23 @@
+.overview-dose-marker {
+  fill: var(--surface);
+  stroke: var(--accent-strong);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.dose-editor input[type="text"] {
+  width: 100%;
+  min-height: 54px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 15px;
+  background: var(--surface-subtle);
+  padding: 0 14px;
+  font-size: 1.25rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .03em;
+}
+
+.dose-editor input[type="text"]:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}

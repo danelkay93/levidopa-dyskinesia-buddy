@@ -1,0 +1,40 @@
+# Forecast Journey implementation notes
+
+This branch starts from the Phase 1 verification foundation and replaces the provisional one-file prototype with a React 19, TypeScript, Vite 8 application.
+
+## Model status
+
+The deterministic model constants, five-minute sampling, isolated 200 mg controlled-release reference, effect-site smoothing, and 8% practical-zero transform are preserved. Model mechanics are extracted into `src/model/pk.ts` and covered by unit tests. The new plain-language periods remain explicitly documented display heuristics and are not clinical thresholds.
+
+## Architecture
+
+- `src/domain`: schedule types and validation
+- `src/model`: deterministic PK/effect-site model
+- `src/interpretation`: derived schedule periods and copy
+- `src/geometry`: chart geometry helpers
+- `src/features/my-day`: Forecast Journey primary experience
+- `src/features/analyze`: technical exposure curve and dose contributions
+- `src/features/schedule` and `src/features/share`: editing and database-free sharing
+- `src/fixtures`: synthetic public fixtures
+
+Analyze and Schedule are loaded as separate application chunks so the primary My Day experience does not eagerly load the technical graph and editor.
+
+## Design authority
+
+The approved Forecast Journey design package remains the visual and interaction authority. The shadcn-style UI primitives use React Aria Components but are restyled entirely through project-owned semantic tokens.
+
+## Responsive correction
+
+The 768-pixel tablet layout uses a narrower persistent detail pane rather than exceeding the viewport. Phone landscape suppresses the empty detail pane and uses a single content column beside the navigation rail. These are structural responsive transformations, not simple scaling.
+
+## State boundaries and persistence
+
+Phone selection sheets close when the user follows their action into Analyze, while the selected dose remains highlighted in the technical curve. Valid locally saved schedules are restored on reload. A malformed shared URL preserves that local schedule and explains the recovery.
+
+## Deployment
+
+The application remains static. A GitHub Pages workflow builds the Vite `dist` directory only after changes reach `main`; this implementation branch does not deploy or merge itself.
+
+## Browser verification
+
+The cloud Browser plugin was not available in this implementation session. Playwright WebKit is therefore the rapid rendered-regression layer. Real Mobile Safari remains a release check for safe-area behavior, dynamic browser chrome, VoiceOver, native sharing, virtual-keyboard behavior, and physical motor usability.

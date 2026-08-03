@@ -1,0 +1,348 @@
+.sheet-motion,
+.context-panel {
+  color: var(--text-primary);
+}
+
+.sheet-overlay {
+  background: rgb(16 47 54 / .24);
+}
+
+.sheet-motion {
+  background: var(--surface);
+  backdrop-filter: none;
+}
+
+.sheet-modal {
+  overscroll-behavior: contain;
+}
+
+body {
+  font-size: 1.0625rem;
+}
+
+.app-header h1 {
+  font-size: 1.75rem;
+}
+
+.app-header > .button {
+  min-height: 52px;
+  height: 52px;
+}
+
+.right-now__label,
+.dose-station__eyebrow,
+.journey-label {
+  font-size: .8125rem;
+}
+
+.right-now h2 {
+  font-size: 1.875rem;
+}
+
+.right-now p {
+  font-size: 1.0625rem;
+}
+
+.dose-station__time {
+  font-size: 1.375rem;
+}
+
+.dose-station--next .dose-station__time {
+  font-size: 1.875rem;
+}
+
+.dose-station__amount {
+  font-size: 1rem;
+}
+
+.dose-station__until {
+  font-size: .9375rem;
+}
+
+.dose-station__forecast {
+  font-size: .8125rem;
+}
+
+.primary-nav__item {
+  font-size: .75rem;
+}
+
+.primary-nav__item span {
+  white-space: nowrap;
+}
+
+.analyze-tabs [role="tab"] {
+  min-height: 52px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  line-height: 1.1;
+}
+
+.journey {
+  margin-top: 20px;
+}
+
+.journey-rail {
+  top: 18px;
+}
+
+.dose-station--next {
+  display: block;
+  min-height: 158px;
+  padding: 16px 44px 42px 18px;
+}
+
+.dose-station--next .dose-station__copy {
+  padding-right: 70px;
+}
+
+.dose-station--next .dose-station__amount {
+  white-space: normal;
+}
+
+.dose-station--next .dose-station__visual,
+.dose-station:not(.dose-station--next) .dose-station__visual {
+  display: contents;
+}
+
+.dose-station--next .tablet-illustration {
+  position: absolute;
+  top: 16px;
+  right: 50px;
+}
+
+.dose-station--next .dose-station__forecast {
+  position: absolute;
+  right: 48px;
+  bottom: 12px;
+  max-width: calc(100% - 72px);
+}
+
+.dose-station:not(.dose-station--next) {
+  display: block;
+  min-height: 104px;
+  padding: 14px 44px 38px 18px;
+}
+
+.dose-station:not(.dose-station--next) .dose-station__copy {
+  padding-right: 68px;
+}
+
+.dose-station:not(.dose-station--next) .dose-station__amount {
+  white-space: normal;
+}
+
+.dose-station:not(.dose-station--next) .tablet-illustration {
+  position: absolute;
+  top: 12px;
+  right: 47px;
+  width: 46px;
+}
+
+.dose-station:not(.dose-station--next) .dose-station__forecast {
+  position: absolute;
+  right: 42px;
+  bottom: 8px;
+  max-width: calc(100% - 76px);
+}
+
+.view--analyze > .view-heading {
+  margin-top: 0;
+}
+
+.dose-editor input[type="time"]::-webkit-datetime-edit-second-field {
+  display: none;
+}
+
+.editor-alert,
+.dose-editor__error {
+  color: var(--period-low);
+  font-weight: 650;
+}
+
+.editor-alert {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--period-low);
+  border-radius: 16px;
+  background: var(--period-low-soft);
+}
+
+.dose-editor__error {
+  margin: -8px 0 0;
+  font-size: .875rem;
+}
+
+.dose-editor input[aria-invalid="true"] {
+  border: 2px solid var(--period-low);
+}
+
+.undo-removal {
+  margin-top: 14px;
+  min-height: 56px;
+  padding: 4px 6px 4px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  background: var(--surface-subtle);
+}
+
+@media (min-width: 768px) {
+  .app-layout:not(:has(.context-panel)) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .app-layout:not(:has(.context-panel)) .view--schedule {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 999px) and (min-height: 521px) {
+  .app-shell {
+    padding-left: 96px;
+    padding-right: 12px;
+  }
+
+  .app-layout:has(.context-panel) {
+    grid-template-columns: minmax(0, 1fr) 225px;
+    gap: 14px;
+  }
+
+  .view {
+    max-width: 421px;
+  }
+
+  .app-layout:not(:has(.context-panel)) .view {
+    max-width: 520px;
+  }
+
+  .context-panel {
+    min-width: 0;
+    padding: 14px;
+  }
+
+  .selection-callout {
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .selection-callout .forecast-glyph {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 520px) {
+  .app-shell {
+    padding: 10px 12px 20px 96px;
+  }
+
+  .app-header {
+    max-width: 640px;
+    padding-left: 0;
+  }
+
+  .app-layout {
+    display: block;
+    max-width: 640px;
+    padding-left: 0;
+  }
+
+  .view {
+    max-width: 640px;
+  }
+}
+
+@media (max-width: 359px) {
+  .right-now {
+    min-height: 250px;
+    padding: 16px 16px 12px;
+  }
+
+  .right-now__main {
+    margin: 16px 0 12px;
+  }
+
+  .right-now h2 {
+    font-size: 1.6875rem;
+  }
+
+  .right-now p {
+    font-size: 1rem;
+  }
+
+  .day-overview,
+  .day-overview svg {
+    min-height: 66px;
+    height: 66px;
+  }
+
+  .journey {
+    margin-top: 10px;
+  }
+
+  .dose-station--next {
+    min-height: 156px;
+    padding: 14px 40px 40px 16px;
+  }
+
+  .dose-station--next .dose-station__copy {
+    padding-right: 48px;
+  }
+
+  .dose-station--next .dose-station__time {
+    margin-top: 2px;
+    font-size: 1.75rem;
+    line-height: 1.05;
+  }
+
+  .dose-station--next .dose-station__amount {
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  .dose-station--next .dose-station__until {
+    margin-top: 2px;
+    font-size: .875rem;
+    line-height: 1.2;
+  }
+
+  .dose-station--next .tablet-illustration {
+    top: 13px;
+    right: 40px;
+    width: 44px;
+  }
+
+  .dose-station--next .dose-station__forecast {
+    left: 16px;
+    right: 16px;
+    bottom: 7px;
+    max-width: none;
+    justify-content: space-between;
+    gap: 8px;
+    line-height: 1.15;
+  }
+
+  .dose-station--next .dose-station__forecast .forecast-glyph {
+    width: 36px;
+    height: 26px;
+    flex: 0 0 auto;
+  }
+
+  .dose-station--next .dose-station__forecast span {
+    max-width: 160px;
+    text-align: right;
+  }
+
+  .dose-station:not(.dose-station--next) {
+    min-height: 112px;
+    padding-left: 16px;
+  }
+}

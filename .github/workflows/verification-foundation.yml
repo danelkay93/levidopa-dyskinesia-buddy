@@ -1,0 +1,80 @@
+name: Forecast Journey verification
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verification-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Install WebKit
+        run: npx playwright install --with-deps webkit
+
+      - name: Unit and component tests
+        run: npm test
+        env:
+          CI: '1'
+
+      - name: TypeScript and production build
+        run: npm run build
+        env:
+          CI: '1'
+
+      - name: Interaction and full-story verification
+        run: npx playwright test tests/e2e/interactions.spec.ts tests/e2e/full-story.spec.ts
+        env:
+          CI: '1'
+
+      - name: Accessibility verification
+        run: npx playwright test tests/e2e/accessibility.spec.ts
+        env:
+          CI: '1'
+
+      - name: Viewport and state capture matrix
+        run: npx playwright test tests/e2e/capture-matrix.spec.ts
+        env:
+          CI: '1'
+
+      - name: Preserve primary verification reports
+        if: always()
+        run: |
+          mkdir -p artifacts/verification-reports
+          cp -R artifacts/reports/. artifacts/verification-reports/ 2>/dev/null || true
+          cp -R artifacts/playwright-report artifacts/verification-reports/playwright-report 2>/dev/null || true
+
+      - name: Generate comparison candidates
+        if: always()
+        run: npm run test:visual:capture
+        env:
+          CI: '1'
+          VISUAL_COMPARE: '1'
+
+      - name: Upload captures and reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: forecast-journey-verification-${{ github.run_id }}
+          path: |
+            artifacts/
+            tests/e2e/__screenshots__/
+          if-no-files-found: warn
+          retention-days: 30
